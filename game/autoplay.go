@@ -89,6 +89,10 @@ func (p *autoplay) step() {
 		return
 	}
 
+	if a.opts.full && a.screen != "title" && a.screen != "letter" {
+		p.whole()
+		return
+	}
 	switch a.screen {
 	case "title":
 		if p.stage > 0 {
@@ -288,4 +292,103 @@ func (p *autoplay) finish() bool {
 		return true
 	}
 	return false
+}
+
+// whole plays an entire tenure through the buttons, with the careful warden
+// choosing. Every command the warden wants must be on offer on some screen,
+// and this walks the UI to it: it opens the right district, the upgrades
+// screen, the right hollow, and ticks the right citizens.
+func (p *autoplay) whole() {
+	a := p.app
+	s := &a.game.State
+	switch a.screen {
+	case "report":
+		p.press("close-report")
+		return
+	case "ledger":
+		p.press("close-ledger")
+		return
+	case "summary":
+		if len(sim.Chronicle(a.game.Log)) < 3 {
+			p.fail("the tenure ended with no chronicle")
+			return
+		}
+		if a.ledger.Tenures != 1 {
+			p.fail("the Ledger counts %d finished tenures, want 1", a.ledger.Tenures)
+			return
+		}
+		fmt.Printf("autoplay: ok. A whole tenure through the UI: %d steps, %s after %d nights, screens %d\n", p.steps, s.Outcome, s.Nights, len(p.seen))
+		p.done = true
+		a.quit(0)
+		return
+	}
+	c := policy.RepairWorst{}.Next(s)
+	open := func(d content.DistrictID) bool { // make sure the district's panel is showing
+		if a.screen == "upgrades" {
+			p.press("close-upgrades")
+			return false
+		}
+		if a.selected != d {
+			p.press("select:" + d.Slug())
+			return false
+		}
+		return true
+	}
+	switch c.Kind {
+	case sim.CmdAssignSteward:
+		if !open(c.District) {
+			return
+		}
+	case sim.CmdRecallSteward:
+		if !open(s.Stewards[c.Steward].District) {
+			return
+		}
+	case sim.CmdIssueDecree:
+		if content.Decrees[c.Decree].Targeted && !open(c.District) {
+			return
+		}
+	case sim.CmdBuyUpgrade:
+		if content.Upgrades[c.Upgrade].Building {
+			if !open(c.District) {
+				return
+			}
+		} else if a.screen != "upgrades" {
+			p.press("upgrades")
+			return
+		}
+	case sim.CmdSendParty:
+		if a.target != c.District {
+			p.press("hollow:" + c.District.Slug())
+			return
+		}
+		want := map[int]bool{}
+		for _, id := range c.Citizens {
+			want[id] = true
+		}
+		for _, id := range a.party { // untick anyone the warden does not want
+			if !want[id] {
+				p.press(fmt.Sprintf("pick:%d", id))
+				return
+			}
+		}
+		if len(a.party) < len(c.Citizens) {
+			have := map[int]bool{}
+			for _, id := range a.party {
+				have[id] = true
+			}
+			for _, id := range c.Citizens {
+				if !have[id] {
+					p.press(fmt.Sprintf("pick:%d", id))
+					return
+				}
+			}
+		}
+		c = sim.SendParty(c.District, a.party...) // the same people, in the order they were ticked
+	}
+	if a.screen == "upgrades" && c.Kind != sim.CmdBuyUpgrade {
+		p.press("close-upgrades")
+		return
+	}
+	p.send(c)
+	p.wait = 0
 }

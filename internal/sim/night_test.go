@@ -236,6 +236,7 @@ func count(events []Event, kind EventKind) int {
 func mighty(s *State, ids ...int) {
 	for _, id := range ids {
 		s.Citizens[id].JitterHP = 500
+		s.Citizens[id].Gear.Attack = 20 // and cannot be outlasted, whatever the tuning
 		s.Citizens[id].HP = s.Citizens[id].Stats().HP
 	}
 }

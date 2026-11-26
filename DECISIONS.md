@@ -161,3 +161,35 @@ These follow from the questions in `QUESTIONS.md` and take effect when the code 
 **D64. Placeholder art.** One Polygon2D per district as its icon. On the node map: squares for rooms, diamonds for hazards, octagons for safe rooms, a spiked shape for the heart. Colour comes from one Theme and a small palette.
 
 **D65. District names agree with their verbs.** "The Market turns", "the Docks turn".
+
+## M6 (2026-11-26)
+
+**D66. The balance was met by changing `tuning.go` only.** The rules, the policies and the harness are as they were at the end of M5. Five groups of numbers moved:
+
+| Number | Spec's starting value | Now | Why |
+| --- | --- | --- | --- |
+| Building decay per day | 4 | 2 | At 4 a district left to starve had every building in ruins within two weeks. Each ruin adds 10 Neglect, so the farmed district turned every single night at Neglect 58 and the `farm` policy never won. This one number made farming viable. |
+| Decree costs | 12 grain, 12 coin, 10 timber, 4 coin + 6 timber, 8 coin + 8 grain | 30 grain, 36 coin, 20 timber, 8 coin + 12 timber, 16 coin + 16 grain | At the old prices the city could afford a decree every day, and nothing ever slipped far. Now it is one every two or three days. |
+| Needs after a heart is cleared | 50 | 65 | At 50 a cleared district was back at Neglect 60 by the next dusk and turned again at once. |
+| Boss HP and Attack | 24 to 30 HP, 4 to 5 Attack; +1 HP per 6 points of grievance | 54 to 64 HP, 7 to 8 Attack; +1 HP per 3 points | The old bosses fell in three rounds and never downed anyone. Now a heart is a real fight, parties sometimes come home without clearing it, and that is what loses tenures. |
+| Enemy growth with severity | +1 HP per 10, +1 Attack per 25 | +1 HP per 6, +1 Attack per 15 | Deeply starved needs breed enemies worth fearing. |
+
+The spec's own numbers for the Dreamer are unchanged: Neglect over ten per turning, 5 on a quiet night, 15 per district still turned, the lid at 100. So are the Neglect formula, the turn threshold of 40, need decay of 12, the steward's +30 and +15, the 25% death chance and exhaustion at 50%. Enemy counts are unchanged too, so Supply 18 still breeds four, as in the spec's example.
+
+**D67. Results, 1,000 tenures per policy, seeds 1 to 1,000.** `random` 0.0%, `repair-worst` 41.0%, `farm` 57.6% (the bar is 80% of `repair-worst`, which is 32.8%). On three other ranges of 1,000 seeds `repair-worst` came out at 37.6%, 41.8% and 41.9%, and `farm` at 58.6%, 59.2% and 59.4%. `make balance` now runs with `-check` and fails if a target is missed.
+
+**D68. Q1 is settled: the Dreamer only rises.** `DreamerSootheOnClear` stayed at 0. The targets were reachable without it. With the spec's values a quiet night (5) costs about what a mild turning does (4 to 5), so a controlled turning costs nothing extra on the meter. That is what makes neglect a lever, and it is why those numbers were left alone.
+
+**D69. `farm` wins more often than `repair-worst`.** The spec asks for at least 80%; it gets about 140%. Leaving one district alone frees the three stewards for five districts, and its hollows pay for gear and seals. A stronger `repair-worst` would close the gap, but the policies are frozen with the rules. A human can do what `farm` does.
+
+**D70. Two test setups changed with the tuning, and no assertion was loosened.** One test issued a decree with the starting stores, which no longer cover one; it now sets the stores it needs. The test helper that makes citizens who "cannot lose" gave them only HP, and a tougher boss could outlast them to the round cap; it now gives them Attack as well. Both tests check what they checked before.
+
+**D71. Fragments: two per tenure.** Collecting all five now takes at least three tenures, so the closing text is a reward for handing the Ledger on, not for one good night.
+
+**D72. Desktop builds.** `make build-linux` works in the build sandbox and the resulting binary passes the smoke script, headless and in a window. macOS and Windows builds need the zig compiler from `ziglang.org`, which the sandbox cannot reach, so they have not been produced. `.github/workflows/build.yml` runs `make check`, `make balance` and `make smoke` on every push and builds all three targets on a tag or on demand. The workflow has not been run yet.
+
+**D73. Playing time is estimated, not measured.** The harness counts the decisions in each full tenure and prices them (45 seconds for a day in the city, 7 for a combat turn, and so on): about 65 minutes as `repair-worst` plays, about 89 as `farm` plays. Both are inside the 60 to 120 minute target. Only a person playing can confirm it.
+
+**D74. A second smoke test plays a whole tenure through the UI.** `make smoke-full` has the careful warden play to the end of a tenure by pressing the UI's buttons, walking to whichever screen offers each command: the right district panel, the upgrades screen, the right hollow, the right citizens. It passed on nine seeds (three wins, six losses). It is the nearest thing to a playtest the sandbox allows.
+
+**D75. `graphics/graphics.gen.go` is ignored by git.** `gd build` writes it into its own folder: a generated Go file that lists the Godot project's resources and imports graphics.gd. Nothing imports it, the build regenerates it, and it would be a second package importing graphics.gd. `game/` remains the only hand-written one.

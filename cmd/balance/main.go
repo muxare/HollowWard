@@ -40,7 +40,34 @@ type result struct {
 	turned  [content.NumDistricts]int
 	cleared int
 	mats    content.Materials
+	choices decisions
 	err     error
+}
+
+// decisions counts what a player has to decide in a tenure, for the estimate
+// of playing time.
+type decisions struct {
+	days, cards, decrees, upgrades, parties, rooms, actions int
+}
+
+// Seconds a new player might spend on each kind of decision. These are
+// assumptions for an estimate, not rules of the game.
+const (
+	secDay     = 45 // reading the city and placing three stewards
+	secCard    = 15
+	secDecree  = 10
+	secUpgrade = 10
+	secDusk    = 25 // reading the dusk screen, every night
+	secParty   = 20 // choosing who goes in
+	secRoom    = 8  // go deeper or go home
+	secAction  = 7  // one citizen's turn in a fight
+	secReport  = 20 // the after-action report, every night
+)
+
+func (d decisions) minutes() float64 {
+	sec := d.days*(secDay+secDusk+secReport) + d.cards*secCard + d.decrees*secDecree + d.upgrades*secUpgrade +
+		d.parties*secParty + d.rooms*secRoom + d.actions*secAction
+	return float64(sec) / 60
 }
 
 // tally is every tenure of one policy.
@@ -56,6 +83,9 @@ type tally struct {
 	turned  [content.NumDistricts]int
 	cleared int
 	mats    content.Materials
+	full    int     // tenures that ran all the nights
+	minutes float64 // estimated playing time of those, summed
+	actions int     // combat actions in those, summed
 }
 
 func (t *tally) winRate() float64 { return 100 * float64(t.wins) / float64(max(t.n, 1)) }
@@ -85,6 +115,20 @@ func tenure(name string, seed uint64) result {
 			r.turned[e.District]++
 		case sim.EvHeartCleared:
 			r.cleared++
+		case sim.EvDayEnded:
+			r.choices.days++
+		case sim.EvCardResolved:
+			r.choices.cards++
+		case sim.EvDecreeIssued:
+			r.choices.decrees++
+		case sim.EvUpgradeBought:
+			r.choices.upgrades++
+		case sim.EvPartySent:
+			r.choices.parties++
+		case sim.EvRoomEntered:
+			r.choices.rooms++
+		case sim.EvCitizenActed:
+			r.choices.actions++
 		}
 	}
 	r.outcome, r.nights, r.dreamer = s.Outcome, s.Nights, s.Dreamer
@@ -154,6 +198,11 @@ func run(args []string, out io.Writer) (bool, error) {
 			for f := range r.mats {
 				t.mats[f] += r.mats[f]
 			}
+			if r.outcome == sim.Won {
+				t.full++
+				t.minutes += r.choices.minutes()
+				t.actions += r.choices.actions
+			}
 		}
 	}
 
@@ -187,6 +236,14 @@ func run(args []string, out io.Writer) (bool, error) {
 		t := tallies[name]
 		fmt.Fprintf(out, "%-13s %10.1f %10.1f %10.1f\n", t.name, float64(t.mats[0])/float64(t.n), float64(t.mats[1])/float64(t.n), float64(t.mats[2])/float64(t.n))
 	}
+
+	fmt.Fprintf(out, "\nEstimated playing time of a full %d-night tenure, at a new player's pace:\n", content.T.Nights)
+	for _, name := range names {
+		if t := tallies[name]; t.full > 0 {
+			fmt.Fprintf(out, "%-13s about %.0f minutes (%d combat turns), from %d full tenures\n", t.name, t.minutes/float64(t.full), t.actions/t.full, t.full)
+		}
+	}
+	fmt.Fprintf(out, "An estimate from counted decisions (%ds a day in the city, %ds a combat turn, and so on). Only a person can measure it.\n", secDay, secAction)
 
 	ok := true
 	if rnd, rep, farm := tallies["random"], tallies["repair-worst"], tallies["farm"]; rnd != nil && rep != nil && farm != nil {

@@ -70,16 +70,48 @@ Balance with the starting values (not yet tuned):
 - `make shots`: the same script in a real window on a virtual display, saving a PNG of every screen. All ten were checked by eye.
 - Tests for the text the screens show (causes, intents, report lines, action ids) run under plain `go test`.
 
-## Next
+**M6: tuning and finish** (2026-11-26)
 
-**M6: tuning and finish.** See `PLAN.md`.
+- Balance targets met by changing `tuning.go` only (table below; what changed and why is in `DECISIONS.md`, D66).
+- Story text: the old warden's letter (7 lines), five fragments found in safe rooms, a closing text unlocked by all five, 22 lines for the Dreamer in six tiers.
+- First-tenure hints on every screen; autosave and "Continue".
+- Linux desktop build made and smoke-tested. A CI workflow builds all three desktop targets.
+- `make smoke-full`: a whole tenure played through the UI's buttons; passes on nine seeds.
+
+| Policy | Wins | Mean nights | Target | |
+| --- | --- | --- | --- | --- |
+| `random` | 0.0% | 3.0 | under 10% | met |
+| `repair-worst` | 41.0% | 15.9 | 30 to 50% | met |
+| `farm` | 57.6% | 17.6 | at least 32.8% (80% of `repair-worst`) | met |
+
+1,000 tenures each, seeds 1 to 1,000. Three other seed ranges gave 37.6 to 41.9% for `repair-worst`.
+
+## Definition of done
+
+| Requirement | State |
+| --- | --- |
+| A new player can finish a 20-night tenure in a desktop build in 60 to 120 minutes | Estimated at 65 to 89 minutes from counted decisions. Not measured: nobody has played it by hand. |
+| Every enemy, hazard and boss shows why it exists | Yes: in the fight, on the map, in the dusk preview, in the report and in the Ledger. Tests hold every generated thing to a cause that matches city state. |
+| The balance targets are met | Yes. |
+| `make check`, `make balance` and `make smoke` all pass | Yes. |
+| `PROGRESS.md` lists the next steps toward the full game | Below. |
+
+## Next steps toward the full game
+
+1. **Play it.** One person, one tenure, start to finish, on a real display. Watch for: text that overflows at other window sizes, whether the cause lines are actually read, and how long it takes.
+2. **Run the CI workflow** and fix whatever the macOS and Windows builds turn up. Then play on those.
+3. **Mouse and keyboard polish.** Keyboard shortcuts for the common actions; a confirm on "Send nobody tonight" when a hollow is open.
+4. **Make `repair-worst` lose for more than one reason.** Nearly all losses are the lid. A tenure that ends because the city ran out of people should be possible more often.
+5. **Art and audio**, which the slice left out: district art, enemy portraits, a sound for the Dreamer's line.
+6. **More city.** Procedural layouts, more than six districts, warden classes and traits. All parked in the spec as out of scope.
+7. **More to learn.** The Ledger can record 42 things (9 enemies, 15 hazards, 18 boss variants). A longer game needs more enemy kinds per family and more than three twists per boss.
 
 ## Known issues
 
-- macOS and Windows builds cannot be produced or tested in the current build sandbox (Q3). Only Linux is proven.
+- macOS and Windows builds have not been produced: the build sandbox cannot reach `ziglang.org`. The CI workflow that should build them has not been run. Only Linux is proven.
 - `go.sum` was produced without access to the Go checksum database. Run `go mod verify` once on a networked machine (`DECISIONS.md`, D10).
 - The first `gd` run on a machine is slow: it builds a patched copy of the Go compiler and the engine bindings. About two minutes here on two cores. Later runs take seconds.
 - `gd test` overwrites `graphics/linux_amd64.so` with a test build. The next `gd run` rebuilds it.
-- The smoke test presses buttons by action id; it does not move a mouse (`DECISIONS.md`, D57). Nobody has clicked through the game by hand yet.
-- The UI is laid out for 1280 by 720 and has only been seen in screenshots from a software renderer.
-- Two of the three balance targets are missed with the starting values (table above). Tuning is M6.
+- The smoke tests press buttons by action id; they do not move a mouse (`DECISIONS.md`, D57). Nobody has clicked through the game by hand yet.
+- The UI is laid out for 1280 by 720 and has only been seen in screenshots from a software renderer. Later screens in a tenure (several open hollows, a fight with four enemies) were exercised by `make smoke-full` but not looked at.
+- `random` loses in about three nights, every time. It meets its target but is a weak floor.

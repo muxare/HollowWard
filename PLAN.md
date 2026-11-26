@@ -67,7 +67,7 @@ Tasks per milestone. Each milestone ends with `make check` passing, `PROGRESS.md
 - `make smoke`: headless autoplay through the real UI command path (start tenure, assign stewards, end day, enter hollow, fight one room, go home), non-zero exit on any failure
 - Visual check of each screen from window screenshots (`make shot`)
 
-## M6: tuning and finish
+## M6: tuning and finish (done; macOS and Windows builds wait on CI)
 
 - Meet the balance targets by changing `tuning.go` only: `random` under 10%, `repair-worst` 30 to 50%, `farm` at least 80% of `repair-worst`
 - Story text: the letter, five fragments, the closing text, the Dreamer's lines

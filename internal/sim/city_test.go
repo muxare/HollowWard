@@ -576,6 +576,7 @@ func TestIllegalCommands(t *testing.T) {
 
 func TestApplyLeavesItsInputAlone(t *testing.T) {
 	s := start(t, 10)
+	s.Resources = content.Cost{100, 100, 100} // enough for any decree, whatever the tuning
 	before := encode(t, s)
 	cmds := []Command{
 		AssignSteward(0, content.Market, content.NoNeed, -1),

@@ -2,3 +2,4 @@
 /bin/
 *.test
 *.prof
+/graphics/graphics.gen.go

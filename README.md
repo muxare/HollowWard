@@ -19,12 +19,17 @@ Written in Go on the Godot engine, joined by [graphics.gd](https://github.com/qu
 | `make check` | `go vet`, lint and race tests. Must pass before every commit. |
 | `make run` | Play in a window. |
 | `make editor` | Open the Godot editor on `graphics/`. |
-| `make smoke` | Start headless and autoplay through the real UI path. |
+| `make smoke` | Start headless and autoplay one day and one night through the UI's buttons. |
+| `make smoke-full` | Autoplay a whole tenure through the UI's buttons. |
 | `make shots` | Play the smoke script in a window on a virtual display and save a PNG of every screen (Linux, needs xvfb). |
 | `make balance` | 1,000 tenures per scripted policy, with the balance targets. |
 | `go run ./cmd/simcli play -policy farm -nights 0` | Play a whole tenure in the terminal. |
 | `go run ./cmd/simcli generate -seed 7` | Print a hollow as text. |
-| `make build` | Desktop builds into `releases/`. |
+| `make build` | Desktop builds into `releases/` (`build-linux`, `build-macos`, `build-windows`). |
+
+## Playing
+
+`make run`. Twenty nights. By day, open a district, send your three stewards where the city is slipping, answer the event, issue a decree if you can pay for it, and end the day. At dusk the most neglected district turns, if its Neglect is 40 or more. Send up to four citizens in, or leave it open and let it feed the Dreamer. Hover over anything to see why it exists.
 
 ## Layout
 

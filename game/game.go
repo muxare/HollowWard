@@ -31,6 +31,7 @@ func Main() {
 type options struct {
 	autoplay   bool   // play a scripted session through the UI, then quit
 	fail       bool   // autoplay reports a failure (proves the exit code path)
+	full       bool   // autoplay plays a whole tenure through the buttons
 	screenshot string // save the first screen to this PNG, then quit
 	shots      string // autoplay saves a PNG of each screen into this folder
 	seed       uint64 // seed for new tenures (0: from the clock)
@@ -44,6 +45,8 @@ func parseOptions(args []string) options {
 			o.autoplay = true
 		case arg == "--autoplay-fail":
 			o.autoplay, o.fail = true, true
+		case arg == "--autoplay-full":
+			o.autoplay, o.full = true, true
 		case strings.HasPrefix(arg, "--screenshot="):
 			o.screenshot = strings.TrimPrefix(arg, "--screenshot=")
 		case strings.HasPrefix(arg, "--shots="):

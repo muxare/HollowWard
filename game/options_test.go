@@ -15,6 +15,7 @@ func TestParseOptions(t *testing.T) {
 		{"unknown ignored", []string{"--nope", "--autoplay"}, options{autoplay: true}},
 		{"shots and seed", []string{"--autoplay", "--shots=/tmp/s", "--seed=42"}, options{autoplay: true, shots: "/tmp/s", seed: 42}},
 		{"a bad seed is ignored", []string{"--seed=many"}, options{}},
+		{"a whole tenure", []string{"--autoplay-full"}, options{autoplay: true, full: true}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
