@@ -1,0 +1,77 @@
+# golangci-lint v2 config. Needs a golangci-lint built with Go 1.27 or newer
+# (v2.15.0 or later).
+version: "2"
+
+run:
+  timeout: 10m
+
+linters:
+  default: standard
+  enable:
+    - depguard
+    - forbidigo
+    - errorlint
+    - misspell
+    - unconvert
+  settings:
+    depguard:
+      rules:
+        # internal/sim is a pure core: no engine, no presentation, no OS, no clock.
+        sim-pure:
+          list-mode: lax
+          files:
+            - "**/internal/sim/**"
+            - "!$test"
+          deny:
+            - pkg: "os"
+              desc: "internal/sim is pure: game/ does the I/O"
+            - pkg: "time"
+              desc: "internal/sim is deterministic: no clock"
+            - pkg: "math/rand$"
+              desc: "use math/rand/v2 PCG sources kept in state"
+        sim-no-presentation:
+          list-mode: lax
+          files:
+            - "**/internal/sim/**"
+          deny:
+            - pkg: "graphics.gd"
+              desc: "internal/sim must not import the engine"
+            - pkg: "hollowward/game"
+              desc: "internal/sim must not import the presentation"
+        # graphics.gd warns of breaking changes: keep it behind one package.
+        graphics-only-in-game:
+          list-mode: lax
+          files:
+            - "$all"
+            - "!**/game/**"
+          deny:
+            - pkg: "graphics.gd"
+              desc: "only package game may import graphics.gd"
+    forbidigo:
+      analyze-types: true
+      forbid:
+        - pattern: ^time\.Now$
+          pkg: ^time$
+          msg: "wall clock: time.Now is not allowed in deterministic code"
+        - pattern: ^rand\.(ExpFloat64|Float32|Float64|Int|Int32|Int32N|Int64|Int64N|IntN|N|NormFloat64|Perm|Shuffle|Uint|Uint32|Uint32N|Uint64|Uint64N|UintN)$
+          pkg: ^math/rand/v2$
+          msg: "global random source: draw from a seeded PCG stream kept in state"
+        - pattern: .*
+          pkg: ^math/rand$
+          msg: "math/rand v1: use math/rand/v2 with an explicit PCG source"
+  exclusions:
+    rules:
+      # The shells may read the clock (timing a balance run, picking a new
+      # seed). Nothing under internal/ may.
+      - path: ^(cmd|game)/
+        linters:
+          - forbidigo
+        text: "wall clock"
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+formatters:
+  enable:
+    - gofmt
