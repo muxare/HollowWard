@@ -48,3 +48,36 @@ func TestGenerate(t *testing.T) {
 		}
 	}
 }
+
+func TestPlay(t *testing.T) {
+	for _, name := range []string{"random", "repair-worst", "farm"} {
+		t.Run(name, func(t *testing.T) {
+			args := []string{"play", "-seed", "3", "-policy", name, "-nights", "14"}
+			var out, again bytes.Buffer
+			if err := run(args, &out); err != nil {
+				t.Fatal(err)
+			}
+			if err := run(args, &again); err != nil || again.String() != out.String() {
+				t.Error("the same arguments played a different game")
+			}
+			for _, want := range []string{"--- Day 1 ---", "Dusk.", "Dawn.", "TURNS. Neglect", "policy " + name + ", seed 3"} {
+				if !strings.Contains(out.String(), want) {
+					t.Errorf("output lacks %q", want)
+				}
+			}
+			// Everything met in a hollow says why it is there.
+			for _, line := range strings.Split(out.String(), "\n") {
+				if strings.Contains(line, "Waiting here:") && !strings.Contains(line, " was ") {
+					t.Errorf("no cause on line %q", line)
+				}
+			}
+		})
+	}
+	var quiet bytes.Buffer
+	if err := run([]string{"play", "-q", "-nights", "2"}, &quiet); err != nil || strings.Count(quiet.String(), "\n") != 1 {
+		t.Errorf("-q should print one summary line, got %q (%v)", quiet.String(), err)
+	}
+	if err := run([]string{"play", "-policy", "pacifist"}, &bytes.Buffer{}); err == nil {
+		t.Error("an unknown policy must be an error")
+	}
+}

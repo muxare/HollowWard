@@ -26,6 +26,7 @@ type Event struct {
 	Day      int                `json:"day"`
 	District content.DistrictID `json:"district"`
 	Citizen  int                `json:"citizen"`
+	Who      string             `json:"who,omitempty"` // the citizen's name, so the log reads alone
 	ID       string             `json:"id,omitempty"`
 	N        int                `json:"n,omitempty"`
 	V        int                `json:"v,omitempty"`
@@ -44,6 +45,8 @@ func (l *log) add(kind EventKind) *Event {
 }
 
 func (e *Event) in(d content.DistrictID) *Event { e.District = d; return e }
+func (e *Event) who(c *Citizen) *Event          { e.Citizen, e.Who = c.ID, c.Name; return e }
+func (e *Event) because(c ...Cause) *Event      { e.Causes = append(e.Causes, c...); return e }
 func (e *Event) id(id string) *Event            { e.ID = id; return e }
 func (e *Event) n(n int) *Event                 { e.N = n; return e }
 func (e *Event) v(v int) *Event                 { e.V = v; return e }

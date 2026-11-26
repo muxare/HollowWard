@@ -89,3 +89,31 @@ These follow from the questions in `QUESTIONS.md` and take effect when the code 
 **D31. Boss variants.** Six bosses, one per district's key figure, each twisted one of three ways by the grievance: Starved (Supply), Unpaid (Order), Crumbling (Upkeep). The twist picks the boss's two special moves. The boss grows with how low the grievance is, and brings up to two escorts of the grievance's family when that need is below 50.
 
 **D32. A hazard room costs HP.** Everyone who enters loses 2 HP, plus 1 per 10 points the building is below 30. Hazards hold no enemies.
+
+## M3 (2026-11-26)
+
+**D33. Every night passes through a dusk phase.** After the day tick the game stops at dusk, even on a quiet night. The player sends a party into any open hollow or lets the night pass. This is the Q4 default: one expedition per night, into a hollow of the player's choosing.
+
+**D34. Enemies show two actions: this round's and the next round's.** With only one shown, a fast enemy could act at the end of one round and again at the start of the next before any citizen chose anything, and its second action would never have been on show. With two, every enemy action that can happen before a citizen's next choice is visible when they choose. A test checks this for every enemy action in whole tenures. The one exception is unavoidable: an enemy faster than every citizen acts in round 1 before anyone has chosen.
+
+**D35. Initiative uses no dice.** Fastest first. A tie goes to the citizen, then to the lower party slot or enemy index. Hook and Shove move their target to the back of the next round.
+
+**D36. No fleeing in the middle of a fight.** The spec offers "go deeper or go home" after each room. Inside a fight the only exits are winning, the whole party going down, or the round cap.
+
+**D37. The round cap is 12.** A fight that reaches round 13 ends with the hollow driving the party out, which counts as going home. Enemies keep the wounds they took.
+
+**D38. A wiped party is carried out.** If every party member is Downed the night ends. Each then rolls for death like any other Downed citizen.
+
+**D39. Damage is fixed, not rolled.** A blow does Attack minus Guard, at least 1. The combat stream only picks targets for enemy moves that have no rule for it. Fights stay readable and the intent on show is what happens.
+
+**D40. Abilities need a turn of rest between uses.** A boss cannot be stunned.
+
+**D41. Everyone wakes at full HP.** Wounds do not carry over to the next night. The lasting costs of a night are the ones the spec names: exhaustion, Scars and deaths. Only citizens who were in a fight are exhausted; walking through empty rooms tires nobody.
+
+**D42. Clearing the heart lifts needs to 50; it never lowers one.** A need already above 50 stays where it was.
+
+**D43. Materials drop one per kill,** plus two of the grievance's family and 8 coin from the heart. A Scavenger in the party finds one more per room cleared.
+
+**D44. A hazard room catches a party once.** After that it is cleared like any other room. Cleared rooms stay cleared across nights (Q4 default).
+
+**D45. The scripted wardens look one step ahead.** `repair-worst` and `farm` answer cards and choose decrees by applying each option to a copy of the state and comparing the result. They send the four hardiest citizens and go home when the party is badly hurt. `random` tries random orders and sends whichever the rules accept.

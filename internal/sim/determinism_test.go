@@ -29,6 +29,7 @@ func script(t testing.TB, seed uint64, days int) (State, []Command, []Event) {
 		send(ResolveEvent(1 - day%2)) // if the first was too dear
 		send(IssueDecree(content.DecreeID(day%int(content.NumDecrees)), content.DistrictID(day%int(content.NumDistricts))))
 		send(EndDay())
+		send(StayHome())
 	}
 	return s, cmds, events
 }

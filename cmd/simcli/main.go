@@ -3,7 +3,7 @@
 //
 //	simcli generate -seed N [-days D] [-district NAME] [-needs S,O,U] [-conds A,B,C]
 //
-// The play command lands in milestone M3.
+//	simcli play -seed N [-policy NAME] [-nights K] [-q]
 package main
 
 import (
@@ -27,7 +27,7 @@ func run(args []string, out io.Writer) error {
 	case "generate":
 		return generate(args[1:], out)
 	case "play":
-		return fmt.Errorf("play is not built yet (it lands in M3)")
+		return play(args[1:], out)
 	}
 	return fmt.Errorf("unknown command %q; want generate or play", args[0])
 }

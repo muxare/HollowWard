@@ -28,6 +28,26 @@ func (s *State) apply(c Command, l *log) error {
 		}
 	}
 	switch c.Kind {
+	case CmdSendParty, CmdStayHome:
+		if s.Phase != PhaseDusk {
+			return ErrWrongPhase
+		}
+	case CmdAdvance, CmdGoHome, CmdAct:
+		if s.Phase != PhaseNight || s.Expedition == nil {
+			return ErrWrongPhase
+		}
+	}
+	switch c.Kind {
+	case CmdSendParty:
+		return s.sendParty(c, l)
+	case CmdStayHome:
+		return s.stayHome(l)
+	case CmdAdvance:
+		return s.advance(c, l)
+	case CmdGoHome:
+		return s.goHome(l)
+	case CmdAct:
+		return s.act(c, l)
 	case CmdAssignSteward:
 		return s.assignSteward(c)
 	case CmdRecallSteward:
@@ -42,9 +62,13 @@ func (s *State) apply(c Command, l *log) error {
 	return ErrUnknown
 }
 
-// dusk is what follows the day. Until the night exists (M3) the next day
-// simply begins.
-func (s *State) dusk(l *log) {
-	s.Day++
-	s.startDay(l)
-}
+// The pieces of the night that the full tenure (M4) fills in.
+
+// duskClock is where the Dreamer rises at dusk.
+func (s *State) duskClock(_ *log) {}
+
+// dawn is where the tenure can end. It reports whether it did.
+func (s *State) dawn(_ *log) bool { return false }
+
+// searchHaven is where a safe room gives up what it hides.
+func (s *State) searchHaven(_ *Room, _ *log) {}

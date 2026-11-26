@@ -34,7 +34,7 @@ Tasks per milestone. Each milestone ends with `make check` passing, `PROGRESS.md
 - `simcli generate -seed N` prints a hollow as text, causes included
 - Tests: legibility fixtures (Supply 10, others 80 gives Hunger only, and so on), 500 fixed seeds for cause coverage, `FuzzGenerateHollow`, graph invariants (connected, one heart, heart reachable, 6 to 10 rooms)
 
-## M3: expedition and combat, headless
+## M3: expedition and combat, headless (done)
 
 - Dusk: pick the turned district (Neglect 40 or more, seeded tie-break), or a quiet night
 - Party selection, room-to-room movement, go deeper or go home

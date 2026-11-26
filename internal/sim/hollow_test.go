@@ -384,8 +384,7 @@ func TestCauseCoverageInPlay(t *testing.T) {
 	for _, seed := range []uint64{1, 2, 3} {
 		s := start(t, seed)
 		for day := 0; day < 12; day++ {
-			s = answer(t, s)
-			s, _ = do(t, s, EndDay())
+			s = pass(t, s)
 			for id := range s.Districts {
 				d := &s.Districts[id]
 				h := GenerateHollow(d, s.Day, &s.RNG.Gen)

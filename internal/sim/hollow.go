@@ -56,11 +56,31 @@ type Enemy struct {
 	Attack    int             `json:"attack"`
 	Guard     int             `json:"guard"`
 	Speed     int             `json:"speed"`
-	Cause     Cause           `json:"cause"` // why it exists
-	NextMove  int             `json:"next_move"`
-	Stunned   bool            `json:"stunned"`
-	Hooked    bool            `json:"hooked"`
+	Cause     Cause           `json:"cause"`     // why it exists
+	NextMove  int             `json:"next_move"` // position in its repertoire
+	Intent    Intent          `json:"intent"`    // what it does this round
+	Next      Intent          `json:"next"`      // what it does the round after
+	Acted     bool            `json:"acted"`     // has taken this round's action
+	Stunned   bool            `json:"stunned"`   // loses its next action
+	Hooked    bool            `json:"hooked"`    // acts last next round
 	AttackMod int             `json:"attack_mod"`
+}
+
+// Upcoming is the enemy's next action as the player should see it: this
+// round's if it has yet to act, otherwise next round's.
+func (e *Enemy) Upcoming() Intent {
+	if e.Acted {
+		return e.Next
+	}
+	return e.Intent
+}
+
+// Intent is an action an enemy has shown it will take. Enemies always show
+// two: this round's and the next round's. So whenever a citizen has to choose,
+// every enemy action that can happen before their next choice is on show.
+type Intent struct {
+	Move   content.MoveID `json:"move"`
+	Target int            `json:"target"` // a citizen ID, or -1 for everyone or no one
 }
 
 // Slug identifies the enemy's kind for the Ledger.
@@ -69,6 +89,17 @@ func (e *Enemy) Slug(h *Hollow) string {
 		return content.BossSlug(h.District, h.Grievance)
 	}
 	return content.Enemies[e.Kind].Slug
+}
+
+func (h Hollow) clone() Hollow {
+	n := h
+	n.Rooms = make([]Room, len(h.Rooms))
+	for i, r := range h.Rooms {
+		r.Exits = append([]int(nil), r.Exits...)
+		r.Enemies = append([]Enemy(nil), r.Enemies...)
+		n.Rooms[i] = r
+	}
+	return n
 }
 
 // Group is a run of like enemies in a room, for display.

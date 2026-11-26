@@ -31,16 +31,25 @@
 - `simcli generate -seed N` prints a hollow as text. `-needs` and `-conds` set a district by hand.
 - Tests: 11 legibility fixtures, "lower need means more and stronger", 500 fixed seeds, districts from real play, `FuzzGenerateHollow` (about a million inputs clean), graph invariants.
 
+**M3: expedition and combat, headless** (2026-11-26)
+
+- Dusk: the most neglected district turns at Neglect 40 or more, ties broken by a seeded stream; its hollow is generated then and frozen with the district.
+- Expeditions: parties of 1 to 4, room-to-room movement, go deeper or go home; hazard and safe rooms; cleared rooms stay cleared.
+- Combat: initiative by Speed, seven job abilities, 17 enemy and boss moves, intents shown two actions ahead, a round cap.
+- Night's end: Downed citizens die (25%) or take a Scar; those who fought are exhausted; clearing the heart restores the district and drops loot.
+- Policies `random`, `repair-worst` and `farm`; `simcli play -seed N -policy P -nights K` prints the event log as text.
+- Tests: dusk selection and ties, party rules, hazards and safe rooms, death and Scar rates over 2,000 seeds, exhaustion, initiative, every ability, every enemy move, the round cap, wipes. A property test plays 36 tenures and checks after every command that HP stays in range, causes still match the frozen district, every enemy action was announced, and every fight ends.
+
 ## Next
 
-**M3: expedition and combat, headless.** See `PLAN.md`.
+**M4: full tenure.** See `PLAN.md`.
 
 ## Known issues
 
-- The repository is `muxare/HollowWard`, but pushes are refused until the Claude GitHub App is installed on it. Commits are local for now.
 - macOS and Windows builds cannot be produced or tested in the current build sandbox (Q3). Only Linux is proven.
 - `go.sum` was produced without access to the Go checksum database. Run `go mod verify` once on a networked machine (`DECISIONS.md`, D10).
 - The first `gd` run on a machine is slow: it builds a patched copy of the Go compiler and the engine bindings. About two minutes here on two cores. Later runs take seconds.
 - `gd test` overwrites `graphics/linux_amd64.so` with a test build. The next `gd run` rebuilds it.
-- `make balance` and `simcli` are stubs that exit 2 until M4 and M2.
-- Until M3 adds the night, ending a day starts the next one directly.
+- `make balance` is a stub that exits 2 until M4.
+- The tenure has no end yet: the Dreamer, winning and losing arrive in M4.
+- With the starting values `repair-worst` clears every hollow easily. Balance is M6.

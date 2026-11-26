@@ -81,3 +81,24 @@ func answer(t testing.TB, s State) State {
 }
 
 func sprintf(format string, args ...any) string { return fmt.Sprintf(format, args...) }
+
+// sleep lets the night go by with nobody in a hollow.
+func sleep(t testing.TB, s State) State {
+	t.Helper()
+	if s.Phase == PhaseDusk {
+		s, _ = do(t, s, StayHome())
+	}
+	return s
+}
+
+// pass plays one whole day and night doing nothing: the card gets its free
+// answer and nobody goes into any hollow.
+func pass(t testing.TB, s State) State {
+	t.Helper()
+	s = answer(t, s)
+	s, _ = do(t, s, EndDay())
+	return sleep(t, s)
+}
+
+// calm keeps the city from turning: tests about the day set this first.
+func calm(s *State) { flat(s, 90, 90) }

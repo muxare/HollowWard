@@ -62,6 +62,25 @@ type Tuning struct {
 	HazardDamageBase  int                 // a hazard room hurts everyone by this...
 	HazardDamagePer   int                 // ...plus 1 per this many points below the ruin threshold
 
+	// --- Dusk and the expedition ---
+
+	TurnThreshold    int // the most neglected district turns at this Neglect or more
+	MaxParty         int // citizens in one expedition
+	HavenHealPct     int // a safe room heals this share of max HP, in percent
+	ClearRestoreNeed int // clearing the heart lifts each need to at least this
+	HeartMaterials   int // materials of the grievance's family dropped by the heart
+	HeartCoin        int // coin dropped by the heart
+	DownedDeathPct   int // chance a Downed citizen dies at night's end, in percent
+	LuckyDeathPct    int // the same for a Lucky citizen
+
+	// --- Combat ---
+
+	RoundCap        int // a fight that reaches this round drives the party out
+	DefendGuard     int // Guard gained by defending
+	AbilityCooldown int // rounds before a job ability can be used again
+	Ability         AbilityNumbers
+	Move            MoveNumbers
+
 	// --- Decrees ---
 
 	DecreeCost     [NumDecrees]Cost
@@ -75,6 +94,37 @@ type Tuning struct {
 type EventMagnitudes struct {
 	XS, S, S6, M, L, XL, XXL   int // effect sizes
 	CostLow, CostMid, CostHigh int // what a paid choice costs
+}
+
+// AbilityNumbers are the sizes of the job abilities.
+type AbilityNumbers struct {
+	HoldGuard    int // Guard the watchman gains while holding
+	MendHeal     int // HP a priest restores
+	GrindBonus   int // added to the miller's blow, which ignores Guard
+	HaggleAmount int // Attack a merchant talks off an enemy
+	HaggleFloor  int // lowest an enemy's Attack modifier can be haggled to
+	HeavePenalty int // taken off the labourer's blow against each enemy
+}
+
+// MoveNumbers are the sizes of the enemy moves.
+type MoveNumbers struct {
+	GnawPenalty       int // Gnaw hits for this much less...
+	GnawGuard         int // ...and takes this much Guard
+	GorgeBonus        int
+	ShovePenalty      int
+	BurnDamage        int // Brand: lost at the start of the target's next turn
+	SurgePenalty      int
+	SporeAttack       int // Attack everyone loses to Spore
+	MaulBonus         int
+	EngulfBonus       int
+	DevourBonus       int
+	DevourHeal        int
+	WitherAttack      int // Attack everyone loses to Wither
+	RallyAttack       int // Attack every enemy gains from Rally
+	BreakRanksPenalty int
+	CollapseDamage    int // to everyone, ignoring Guard
+	SporesGuard       int // Guard everyone loses to Spores
+	ModFloor          int // lowest a citizen's Attack or Guard modifier can fall
 }
 
 // T is the tuning in force. Treat it as a constant: nothing writes to it.
@@ -187,6 +237,28 @@ var T = Tuning{
 	BossEscortMax:    2,
 	HazardDamageBase: 2,
 	HazardDamagePer:  10,
+
+	TurnThreshold:    40,
+	MaxParty:         4,
+	HavenHealPct:     50,
+	ClearRestoreNeed: 50,
+	HeartMaterials:   2,
+	HeartCoin:        8,
+	DownedDeathPct:   25,
+	LuckyDeathPct:    12,
+
+	RoundCap:        12,
+	DefendGuard:     2,
+	AbilityCooldown: 2,
+	Ability: AbilityNumbers{
+		HoldGuard: 2, MendHeal: 6, GrindBonus: 2, HaggleAmount: 2, HaggleFloor: -4, HeavePenalty: 2,
+	},
+	Move: MoveNumbers{
+		GnawPenalty: 1, GnawGuard: 1, GorgeBonus: 2, ShovePenalty: 1, BurnDamage: 2,
+		SurgePenalty: 2, SporeAttack: 1, MaulBonus: 1, EngulfBonus: 3,
+		DevourBonus: 2, DevourHeal: 4, WitherAttack: 1, RallyAttack: 1,
+		BreakRanksPenalty: 1, CollapseDamage: 3, SporesGuard: 1, ModFloor: -3,
+	},
 
 	DecreeCost: [NumDecrees]Cost{
 		RationGrain: {Grain: 12},

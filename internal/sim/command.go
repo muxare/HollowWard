@@ -17,6 +17,20 @@ const (
 	CmdIssueDecree   CommandKind = "issue-decree"   // Decree, District (if targeted)
 	CmdResolveEvent  CommandKind = "resolve-event"  // Choice
 	CmdEndDay        CommandKind = "end-day"
+
+	// Dusk and night.
+	CmdSendParty CommandKind = "send-party" // District, Citizens
+	CmdStayHome  CommandKind = "stay-home"  // let the night pass
+	CmdAdvance   CommandKind = "advance"    // Room: go deeper
+	CmdGoHome    CommandKind = "go-home"    // leave the hollow
+	CmdAct       CommandKind = "act"        // Action, Target: the citizen whose turn it is acts
+)
+
+// What a citizen can do on their turn.
+const (
+	ActAttack  ActionKind = "attack"  // Target: an enemy's index in the room
+	ActAbility ActionKind = "ability" // Target: an enemy's index, or a citizen's ID for Hold and Mend
+	ActDefend  ActionKind = "defend"  // brace until your next turn
 )
 
 // Command is one request from the player (or a scripted policy). It is plain
@@ -66,6 +80,25 @@ func ResolveEvent(choice int) Command { return Command{Kind: CmdResolveEvent, Ch
 // EndDay ends the day: stewards work, districts produce, needs decay.
 func EndDay() Command { return Command{Kind: CmdEndDay} }
 
+// SendParty sends citizens into a turned district's hollow.
+func SendParty(d content.DistrictID, citizens ...int) Command {
+	return Command{Kind: CmdSendParty, District: d, Citizens: citizens}
+}
+
+// StayHome lets the night pass with nobody in a hollow.
+func StayHome() Command { return Command{Kind: CmdStayHome} }
+
+// Advance moves the party deeper, into one of the current room's exits.
+func Advance(room int) Command { return Command{Kind: CmdAdvance, Room: room} }
+
+// GoHome ends the expedition. The district stays turned.
+func GoHome() Command { return Command{Kind: CmdGoHome} }
+
+// Act is the acting citizen's move in a fight.
+func Act(action ActionKind, target int) Command {
+	return Command{Kind: CmdAct, Action: action, Target: target}
+}
+
 // Errors Apply returns. A rejected command leaves the state untouched.
 var (
 	ErrWrongPhase   = errors.New("not possible in this phase")
@@ -74,5 +107,8 @@ var (
 	ErrAlreadyDone  = errors.New("already done today")
 	ErrEventPending = errors.New("today's event is not answered")
 	ErrTurned       = errors.New("that district has turned")
+	ErrInFight      = errors.New("not in the middle of a fight")
+	ErrNoFight      = errors.New("there is no fight")
+	ErrNotReady     = errors.New("that ability is not ready")
 	ErrUnknown      = errors.New("unknown command")
 )

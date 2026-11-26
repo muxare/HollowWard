@@ -43,6 +43,11 @@ type State struct {
 	Card         *DrawnCard `json:"card"`          // today's event
 	Deck         []int      `json:"deck"`          // cards not yet drawn, top first
 
+	Materials  [content.NumFamilies]int      `json:"materials"`  // hungerbone, ash-masks, blackcap
+	Hollows    [content.NumDistricts]*Hollow `json:"hollows"`    // one per turned district
+	Dusk       *DuskReport                   `json:"dusk"`       // what happened at dusk tonight
+	Expedition *Expedition                   `json:"expedition"` // the party in a hollow, if any
+
 	RNG Streams `json:"rng"`
 }
 
@@ -184,6 +189,21 @@ func (s State) Clone() State {
 		n.Card = &card
 	}
 	n.Deck = append([]int(nil), s.Deck...)
+	for i, h := range s.Hollows {
+		if h != nil {
+			c := h.clone()
+			n.Hollows[i] = &c
+		}
+	}
+	if s.Dusk != nil {
+		d := *s.Dusk
+		d.Causes = append([]NeglectCause(nil), s.Dusk.Causes...)
+		n.Dusk = &d
+	}
+	if s.Expedition != nil {
+		e := s.Expedition.clone()
+		n.Expedition = &e
+	}
 	n.RNG = s.RNG.clone()
 	return n
 }

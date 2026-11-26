@@ -268,8 +268,7 @@ func TestDecreesApply(t *testing.T) {
 		s := start(t, 3)
 		s.Resources = rich
 		s, _ = do(t, s, IssueDecree(content.Curfew, content.NoDistrict))
-		s = answer(t, s)
-		s, _ = do(t, s, EndDay())
+		s = pass(t, s)
 		if s.DecreeIssued {
 			t.Fatal("the decree flag survived the night")
 		}
@@ -358,8 +357,7 @@ func TestDeckDealsEveryCardOnce(t *testing.T) {
 				}
 			}
 		}
-		s = answer(t, s)
-		s, _ = do(t, s, EndDay())
+		s = pass(t, s)
 	}
 	for c := range content.EventCards {
 		if seen[c] != 2 {
@@ -540,6 +538,10 @@ func TestEndDayOrder(t *testing.T) {
 			t.Fatalf("event order %v, want it to start %v", order, want)
 		}
 	}
+	if next.Phase != PhaseDusk || next.Dusk == nil {
+		t.Fatalf("dusk did not fall: phase %q", next.Phase)
+	}
+	next = sleep(t, next)
 	if next.Day != s.Day+1 || next.Phase != PhaseDay || next.Card == nil || next.Card.Resolved {
 		t.Errorf("the next day did not open properly: day %d, phase %q", next.Day, next.Phase)
 	}
@@ -600,8 +602,7 @@ func TestApplyLeavesItsInputAlone(t *testing.T) {
 func TestStateSurvivesJSON(t *testing.T) {
 	s := start(t, 21)
 	s, _ = do(t, s, AssignSteward(2, content.Docks, content.Order, 1))
-	s = answer(t, s)
-	s, _ = do(t, s, EndDay())
+	s = pass(t, s)
 	first := encode(t, s)
 	var back State
 	if err := json.Unmarshal([]byte(first), &back); err != nil {
@@ -613,9 +614,7 @@ func TestStateSurvivesJSON(t *testing.T) {
 	// And the loaded game plays out the same future.
 	a, b := s, back
 	for range 5 {
-		a, b = answer(t, a), answer(t, b)
-		a, _ = do(t, a, EndDay())
-		b, _ = do(t, b, EndDay())
+		a, b = pass(t, a), pass(t, b)
 	}
 	if encode(t, a) != encode(t, b) {
 		t.Fatal("the loaded game diverged from the original")

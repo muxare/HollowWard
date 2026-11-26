@@ -70,8 +70,7 @@ func TestStreamsAreIndependent(t *testing.T) {
 	setup := append([]byte(nil), s.RNG.Setup.PCG...)
 	events := append([]byte(nil), s.RNG.Events.PCG...)
 	for range 10 {
-		s = answer(t, s)
-		s, _ = do(t, s, EndDay())
+		s = pass(t, s)
 	}
 	if !bytes.Equal(s.RNG.Setup.PCG, setup) {
 		t.Error("playing days advanced the setup stream")
@@ -87,9 +86,7 @@ func TestStreamsAreIndependent(t *testing.T) {
 		if a.Card.Card != b.Card.Card || a.Card.District != b.Card.District {
 			t.Fatal("the event deck depended on steward orders")
 		}
-		a, b = answer(t, a), answer(t, b)
-		a, _ = do(t, a, EndDay())
-		b, _ = do(t, b, EndDay())
+		a, b = pass(t, a), pass(t, b)
 	}
 }
 
