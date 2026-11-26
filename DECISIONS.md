@@ -4,7 +4,7 @@ Choices made where the spec was silent or contradicted itself. Newest last. Each
 
 ## M0 (2026-11-26)
 
-**D1. Module path is `hollowward`.** No hosting location is known yet. A rename is one `sed` once the repository has a home.
+**D1. Module path is `hollowward`.** The repository is `github.com/muxare/HollowWard`. The module keeps the short path: it is an application, nothing imports it, and a mixed-case module path is awkward in Go.
 
 **D2. The entry point is `main.go` at the module root.** `gd` builds the package that sits beside the `graphics/` folder. The root package only calls `game.Main()`, so `game/` stays the single package that imports graphics.gd.
 
@@ -53,3 +53,23 @@ These follow from the questions in `QUESTIONS.md` and take effect when the code 
 **D15. Order within a night.** The Dreamer rises at dusk. If it reaches 100 the tenure ends there, before any expedition. The win is checked after night 20 resolves.
 
 **D16. New-tenure seeds come from outside the sim.** `sim` cannot read a clock or OS entropy. `game/` and the CLIs pass the seed in with the command that starts a tenure.
+
+## M1 (2026-11-26)
+
+**D17. The day tick runs in a fixed order: stewards work, districts produce, needs and buildings decay.** A steward's visit therefore lifts today's output, and decay is the last thing that happens before dusk reads Neglect. Decrees and event choices apply the moment they are chosen.
+
+**D18. The day cannot end with the event card unanswered.** Every card has at least one free choice (a test holds the deck to that), so a card can never block the day. The deck is dealt without replacement and reshuffled when empty: 12 cards over 20 nights means every card is seen once before any repeats.
+
+**D19. Stewards keep their posts across days, and may share a district.** A post with no need or building named resolves to the lowest need and the worst building at the moment the steward works, not when the order is given.
+
+**D20. Output.** A district yields `yield x labour x need factor`. Labour is the sum of its residents' work percentages (traits and scars shift it; a citizen who fought last night works at 50%; the dead do no work). The need factor runs from 50% at mean need 0 to 100% at mean need 100. The spec says only "according to working citizens and need levels".
+
+**D21. Resources are spent on decrees, paid event choices and (from M4) upgrades.** There is no upkeep or consumption. That keeps the city layer small (pillar 6) while still making the choice of decree depend on what the districts produced.
+
+**D22. A turned district is out of reach.** Stewards, decrees and event effects do nothing there, its needs and buildings do not decay, and it produces nothing. This is the Q4 default.
+
+**D23. "Every number in tuning.go" includes the tables.** Job stats, trait and scar modifiers, decree costs and the sizes event cards deal in all live in `tuning.go`. Event cards name a size (`e.M`, `e.CostLow`), never a number. Card text and structure stay in `events.go`.
+
+**D24. The event log is returned by `Apply` and kept by the caller, not stored inside `State`.** `Apply` copies the state it is given so that it never modifies its input. Carrying a growing log inside the state would make every command cost more as the tenure goes on. A save holds the state and the log side by side (M4).
+
+**D25. Five more decisions the spec left open.** Citizens get two different traits that are not opposites (nobody is both Sturdy and Frail). Starting needs are drawn from 55 to 85 and building conditions from 45 to 90. Neglect rounds to the nearest point, and its causes are held in thirds of a point so the three needs share "100 minus the mean" exactly. The grievance and the worst building break ties toward the first in the fixed order.

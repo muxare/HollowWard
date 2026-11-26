@@ -11,7 +11,7 @@ Tasks per milestone. Each milestone ends with `make check` passing, `PROGRESS.md
 - [x] Spike: a Go-defined node draws a rectangle and a label in a Godot window
 - [x] Headless run exits 0, and a failing run exits 1
 
-## M1: city core
+## M1: city core (done)
 
 - `sim.State`, `Command`, `Event` and `Apply`; JSON round-trip of the empty and the starting state
 - RNG streams: PCG per subsystem, stored in state, serialised with the save

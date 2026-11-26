@@ -20,12 +20,7 @@ So the starting values are far from the balance targets. That is fine, since M6 
 
 It is in a cloud workspace now, which does not outlive this session. I am sending you a git bundle of M0.
 
-**Default:** none. I need one of these before M1:
-
-- a GitHub repository I can push to (create an empty one and tell me its name), or
-- a folder on your computer that I can write to.
-
-GitHub is the better fit: a commit per milestone, and CI can produce the desktop builds (Q3).
+**Answered:** `github.com/muxare/HollowWard`. Pushing still needs the Claude GitHub App installed on that repository; until then commits stay local and I send git bundles.
 
 ## Q3. Who builds for macOS and Windows?
 
