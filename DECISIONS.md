@@ -36,7 +36,7 @@ Each rule was checked against a deliberate violation before the files were remov
 - graphics.gd and its dependencies were cloned from GitHub at the pinned versions and served from a local file-based module proxy.
 - All 26 dependency archives matched the checksums in graphics.gd's own upstream `go.sum`. The checksum for graphics.gd itself was computed from the GitHub commit, with no checksum database to compare against.
 
-None of this is in the repository. `go.mod` and `go.sum` are standard. **Action for a networked machine:** run `go mod verify` once. It should pass; if it reports a mismatch for graphics.gd, tell me.
+None of this is in the repository. `go.mod` and `go.sum` are standard. The one open point, whether the locally computed checksum for graphics.gd matches the real one, was closed in M6 (D76).
 
 **D11. `make balance` and `simcli` exit 2 until they exist.** A stub that exits 0 would look like a pass.
 
@@ -186,7 +186,11 @@ The spec's own numbers for the Dreamer are unchanged: Neglect over ten per turni
 
 **D71. Fragments: two per tenure.** Collecting all five now takes at least three tenures, so the closing text is a reward for handing the Ledger on, not for one good night.
 
-**D72. Desktop builds.** `make build-linux` works in the build sandbox and the resulting binary passes the smoke script, headless and in a window. macOS and Windows builds need the zig compiler from `ziglang.org`, which the sandbox cannot reach, so they have not been produced. `.github/workflows/build.yml` runs `make check`, `make balance` and `make smoke` on every push and builds all three targets on a tag or on demand. The workflow has not been run yet.
+**D72. Desktop builds.** `make build-linux` works in the build sandbox and the resulting binary passes the smoke script, headless and in a window. macOS and Windows builds need the zig compiler from `ziglang.org`, which the sandbox cannot reach, so they come from CI. `.github/workflows/build.yml` runs `go mod verify`, `make check`, `make balance` and `make smoke` on every push, and builds all three targets on a tag or on demand. It has run: the checks pass on GitHub's runner, and one run produced Linux, Windows and macOS builds as artifacts. The Windows and macOS builds have not been started by anyone.
+
+**D76. The checksum caveat in D10 is closed.** `go mod verify` passes on GitHub's runner, against the real module proxy and checksum database. The `go.sum` assembled in the sandbox is correct.
+
+**D77. Cross-builds resolve the host's `gd` first.** `GOOS=macos go tool gd build` made `go` cross-compile the `gd` tool itself, which then could not run. The build targets call `go tool -n gd` to get the host's binary and pass it the target.
 
 **D73. Playing time is estimated, not measured.** The harness counts the decisions in each full tenure and prices them (45 seconds for a day in the city, 7 for a combat turn, and so on): about 65 minutes as `repair-worst` plays, about 89 as `farm` plays. Both are inside the 60 to 120 minute target. Only a person playing can confirm it.
 

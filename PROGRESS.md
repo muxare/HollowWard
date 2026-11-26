@@ -75,7 +75,7 @@ Balance with the starting values (not yet tuned):
 - Balance targets met by changing `tuning.go` only (table below; what changed and why is in `DECISIONS.md`, D66).
 - Story text: the old warden's letter (7 lines), five fragments found in safe rooms, a closing text unlocked by all five, 22 lines for the Dreamer in six tiers.
 - First-tenure hints on every screen; autosave and "Continue".
-- Linux desktop build made and smoke-tested. A CI workflow builds all three desktop targets.
+- Linux desktop build made and smoke-tested. The CI workflow built Linux, Windows and macOS (artifacts on the Actions run); it also passes `go mod verify`, `make check`, `make balance` and `make smoke` on GitHub's runner.
 - `make smoke-full`: a whole tenure played through the UI's buttons; passes on nine seeds.
 
 | Policy | Wins | Mean nights | Target | |
@@ -99,7 +99,7 @@ Balance with the starting values (not yet tuned):
 ## Next steps toward the full game
 
 1. **Play it.** One person, one tenure, start to finish, on a real display. Watch for: text that overflows at other window sizes, whether the cause lines are actually read, and how long it takes.
-2. **Run the CI workflow** and fix whatever the macOS and Windows builds turn up. Then play on those.
+2. **Start the Windows and macOS builds.** CI produces them, but nobody has run either. Download them from the latest "build" run under Actions.
 3. **Mouse and keyboard polish.** Keyboard shortcuts for the common actions; a confirm on "Send nobody tonight" when a hollow is open.
 4. **Make `repair-worst` lose for more than one reason.** Nearly all losses are the lid. A tenure that ends because the city ran out of people should be possible more often.
 5. **Art and audio**, which the slice left out: district art, enemy portraits, a sound for the Dreamer's line.
@@ -108,8 +108,7 @@ Balance with the starting values (not yet tuned):
 
 ## Known issues
 
-- macOS and Windows builds have not been produced: the build sandbox cannot reach `ziglang.org`. The CI workflow that should build them has not been run. Only Linux is proven.
-- `go.sum` was produced without access to the Go checksum database. Run `go mod verify` once on a networked machine (`DECISIONS.md`, D10).
+- The Windows and macOS builds exist as CI artifacts but have never been started. Only the Linux build has been run.
 - The first `gd` run on a machine is slow: it builds a patched copy of the Go compiler and the engine bindings. About two minutes here on two cores. Later runs take seconds.
 - `gd test` overwrites `graphics/linux_amd64.so` with a test build. The next `gd run` rebuilds it.
 - The smoke tests press buttons by action id; they do not move a mouse (`DECISIONS.md`, D57). Nobody has clicked through the game by hand yet.

@@ -1,5 +1,4 @@
 # Checks every push, and builds the desktop releases on demand or on a tag.
-# Not yet run: it was written in a sandbox that cannot reach GitHub Actions.
 name: build
 
 on:

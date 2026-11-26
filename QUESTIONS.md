@@ -28,7 +28,7 @@ It is in a cloud workspace now, which does not outlive this session. I am sendin
 
 `gd` cross-compiles with zig, which it downloads from `ziglang.org`, and it downloads Godot export templates. This workspace can reach GitHub and nothing else that matters: `proxy.golang.org`, `go.dev`, `ziglang.org` and `graphics.gd` are all blocked. I worked around that for M0 (see `DECISIONS.md`, D10), but I cannot produce or test macOS and Windows builds from here.
 
-**Outcome:** Linux is built and tested. macOS and Windows wait on the CI workflow or on `make build` on your machine (D72). Still open: which OS will you play on?
+**Outcome:** Linux is built and tested here. CI builds all three; the Windows and macOS builds are artifacts on the Actions run and have not been started by anyone (D72). Still open: which OS will you play on?
 
 **Default taken:** I build and test Linux here. macOS and Windows builds come from a GitHub Actions workflow that I write in M6, or from `make build` on your machine. Tell me which OS you will play on, so I check that one first.
 
