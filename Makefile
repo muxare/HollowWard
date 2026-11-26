@@ -54,14 +54,16 @@ editor:
 ## and, for macOS and Windows, the zig compiler.
 build: build-linux build-macos build-windows
 
+# `go tool` would cross-compile gd itself if GOOS were set for it, so gd is
+# built for this machine first and then told the target.
 build-linux:
-	GOOS=linux $(GD) build
+	GOOS=linux "$$($(GO) tool -n gd)" build
 
 build-macos:
-	GOOS=macos $(GD) build
+	GOOS=macos "$$($(GO) tool -n gd)" build
 
 build-windows:
-	GOOS=windows $(GD) build
+	GOOS=windows "$$($(GO) tool -n gd)" build
 
 clean:
 	rm -rf releases graphics/.godot graphics/*.so graphics/*.dll graphics/*.dylib
