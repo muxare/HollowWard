@@ -14,6 +14,7 @@ type DistrictDef struct {
 	ID          DistrictID
 	Slug        string
 	Name        string
+	Plural      bool   // "the Docks are", not "the Docks is"
 	FigureTitle string // the key figure's office; their name is reshuffled each tenure
 	Buildings   []BuildingDef
 	Jobs        []JobID // one resident per entry
@@ -39,7 +40,7 @@ var Districts = [NumDistricts]DistrictDef{
 		Jobs: []JobID{Watchman, Watchman, Smith},
 	},
 	Docks: {
-		ID: Docks, Slug: "docks", Name: "Docks", FigureTitle: "Harbourmaster",
+		ID: Docks, Slug: "docks", Name: "Docks", Plural: true, FigureTitle: "Harbourmaster",
 		Buildings: []BuildingDef{
 			{"warehouse", "Warehouse", "The Flooded Warehouse", "The Dry Warehouse"},
 			{"crane", "Crane", "The Crane, Still Turning", "The Crane Yard"},
@@ -56,7 +57,7 @@ var Districts = [NumDistricts]DistrictDef{
 		Jobs: []JobID{Priest, Priest, Labourer},
 	},
 	Mills: {
-		ID: Mills, Slug: "mills", Name: "Mills", FigureTitle: "Mill Reeve",
+		ID: Mills, Slug: "mills", Name: "Mills", Plural: true, FigureTitle: "Mill Reeve",
 		Buildings: []BuildingDef{
 			{"east-wheel", "East Wheel", "The East Wheel, Grinding Nothing", "The East Wheel"},
 			{"grain-store", "Grain Store", "The Grain Store, Gone to Dust", "The Grain Store"},
@@ -65,7 +66,7 @@ var Districts = [NumDistricts]DistrictDef{
 		Jobs: []JobID{Miller, Miller, Miller, Smith},
 	},
 	Tenements: {
-		ID: Tenements, Slug: "tenements", Name: "Tenements", FigureTitle: "Rentmaster",
+		ID: Tenements, Slug: "tenements", Name: "Tenements", Plural: true, FigureTitle: "Rentmaster",
 		Buildings: []BuildingDef{
 			{"well", "Well", "The Well, Rope Cut", "The Sweet Well"},
 			{"long-stair", "Long Stair", "The Long Stair, Burned", "The Long Stair"},
@@ -87,3 +88,12 @@ var StewardNames = [NumStewards]string{"Steward Ilse", "Steward Odo", "Steward B
 // NumStewards is how many stewards the warden has. Fewer than districts, so
 // some district always slips.
 const NumStewards = 3
+
+// Verb picks the verb form that agrees with the district's name: the Market
+// turns, the Docks turn.
+func (d DistrictID) Verb(singular, plural string) string {
+	if d.Valid() && Districts[d].Plural {
+		return plural
+	}
+	return singular
+}

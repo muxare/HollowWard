@@ -55,7 +55,7 @@ Tasks per milestone. Each milestone ends with `make check` passing, `PROGRESS.md
 - `cmd/balance`: parallel tenures, one state per goroutine; win rate, mean nights survived, turn counts per district
 - Tests: determinism over 3 seeds for a full tenure (identical state and event log), save and load round-trip, resume-then-play equals play-through, Ledger never changes a stat, balance harness is race-clean
 
-## M5: Godot presentation
+## M5: Godot presentation (done)
 
 - Scene shell and a Godot Theme; Polygon2D shapes and text only
 - City view; district panel with the Neglect meter and its causes

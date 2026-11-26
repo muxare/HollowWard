@@ -402,6 +402,7 @@ func TestChronicle(t *testing.T) {
 		{Kind: EvHeartCleared, Day: 3, District: content.Market, ID: "market-boss/supply"},
 		{Kind: EvDied, Day: 3, Who: "Hale"}, {Kind: EvScarred, Day: 3, Who: "Sten", ID: "limp"},
 		{Kind: EvDayStarted, Day: 4}, {Kind: EvQuietNight, Day: 4},
+		{Kind: EvDayStarted, Day: 5}, {Kind: EvQuietNight, Day: 5},
 		{Kind: EvTenureEnded, Day: 5, ID: string(LostLid), N: 4},
 	}
 	got := strings.Join(Chronicle(events), "\n")

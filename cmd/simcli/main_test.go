@@ -60,7 +60,7 @@ func TestPlay(t *testing.T) {
 			if err := run(args, &again); err != nil || again.String() != out.String() {
 				t.Error("the same arguments played a different game")
 			}
-			for _, want := range []string{"--- Day 1 ---", "Dusk.", "Dawn.", "TURNS. Neglect", "policy " + name + ", seed 3"} {
+			for _, want := range []string{"--- Day 1 ---", "Dusk.", "Dawn.", " Neglect ", "policy " + name + ", seed 3"} {
 				if !strings.Contains(out.String(), want) {
 					t.Errorf("output lacks %q", want)
 				}

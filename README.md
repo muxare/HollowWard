@@ -20,8 +20,10 @@ Written in Go on the Godot engine, joined by [graphics.gd](https://github.com/qu
 | `make run` | Play in a window. |
 | `make editor` | Open the Godot editor on `graphics/`. |
 | `make smoke` | Start headless and autoplay through the real UI path. |
-| `make shot` | Render in a window on a virtual display and save a PNG (Linux, needs xvfb). |
-| `make balance` | 1,000 tenures per scripted policy (from M4). |
+| `make shots` | Play the smoke script in a window on a virtual display and save a PNG of every screen (Linux, needs xvfb). |
+| `make balance` | 1,000 tenures per scripted policy, with the balance targets. |
+| `go run ./cmd/simcli play -policy farm -nights 0` | Play a whole tenure in the terminal. |
+| `go run ./cmd/simcli generate -seed 7` | Print a hollow as text. |
 | `make build` | Desktop builds into `releases/`. |
 
 ## Layout

@@ -59,9 +59,20 @@ Balance with the starting values (not yet tuned):
 | `repair-worst` | 98.8% | 20.0 | 30 to 50% |
 | `farm` | 0.0% | 15.7 | at least 80% of `repair-worst` |
 
+**M5: Godot presentation** (2026-11-26)
+
+- Ten screens, all Go through graphics.gd, rebuilt from state after every command: title, the old warden's letter, city, upgrades, dusk, node map, combat, after-action report, Ledger, tenure summary.
+- City: six district cards with Neglect and needs; a district panel with Neglect's causes largest first, needs, buildings, "if it turned tonight", steward orders, residents and output; the event card; decrees.
+- Dusk: the Dreamer's line and why it rose, what turned and why, the Ledger's preview of every open hollow, the party roster.
+- Night: the hollow as a node map with a cause on every room; combat with every enemy's cause and its next two actions.
+- Saves and the Ledger in `user://`; "Continue" on the title screen; hints during the first tenure.
+- `make smoke`: headless autoplay through the UI's own buttons. It starts a tenure, sends each steward out, ends the day, picks a party, enters the hollow, fights one room, goes home, reads the report, and checks the save on disk matches the game. Exit 0; `--autoplay-fail` exits 1.
+- `make shots`: the same script in a real window on a virtual display, saving a PNG of every screen. All ten were checked by eye.
+- Tests for the text the screens show (causes, intents, report lines, action ids) run under plain `go test`.
+
 ## Next
 
-**M5: Godot presentation.** See `PLAN.md`.
+**M6: tuning and finish.** See `PLAN.md`.
 
 ## Known issues
 
@@ -69,4 +80,6 @@ Balance with the starting values (not yet tuned):
 - `go.sum` was produced without access to the Go checksum database. Run `go mod verify` once on a networked machine (`DECISIONS.md`, D10).
 - The first `gd` run on a machine is slow: it builds a patched copy of the Go compiler and the engine bindings. About two minutes here on two cores. Later runs take seconds.
 - `gd test` overwrites `graphics/linux_amd64.so` with a test build. The next `gd run` rebuilds it.
+- The smoke test presses buttons by action id; it does not move a mouse (`DECISIONS.md`, D57). Nobody has clicked through the game by hand yet.
+- The UI is laid out for 1280 by 720 and has only been seen in screenshots from a software renderer.
 - Two of the three balance targets are missed with the starting values (table above). Tuning is M6.

@@ -6,7 +6,7 @@ GO   ?= go
 GD   ?= $(GO) tool gd
 GOLANGCI ?= golangci-lint
 
-.PHONY: check vet lint test fuzz smoke shot balance run editor build clean
+.PHONY: check vet lint test fuzz smoke shots balance run editor build clean
 
 ## check: vet, lint and race tests. Must pass before every commit.
 check: vet lint test
@@ -28,10 +28,12 @@ fuzz:
 smoke:
 	$(GD) run --headless -- --autoplay
 
-## shot: render in a real window on a virtual display and save a PNG (Linux, needs xvfb).
-SHOT ?= /tmp/hollow-ward.png
-shot:
-	xvfb-run -a -s "-screen 0 1280x720x24" $(GD) run -- --screenshot=$(SHOT)
+## shots: play the smoke script in a real window on a virtual display and save
+## a PNG of every screen (Linux, needs xvfb).
+SHOTS ?= /tmp/hollow-ward-shots
+shots:
+	mkdir -p $(SHOTS)
+	xvfb-run -a -s "-screen 0 1280x720x24" $(GD) run -- --autoplay --shots=$(SHOTS)
 
 ## balance: 1,000 tenures per scripted policy (from M4).
 balance:

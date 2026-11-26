@@ -114,7 +114,7 @@ func (e Event) Text() string {
 	case EvDayEnded:
 		return "Dusk."
 	case EvTurned:
-		return fmt.Sprintf("%s TURNS. Neglect %d%s.", strings.ToUpper(where), e.N, because(e.Causes))
+		return fmt.Sprintf("%s %s. Neglect %d%s.", strings.ToUpper(where), e.District.Verb("TURNS", "TURN"), e.N, because(e.Causes))
 	case EvQuietNight:
 		return "No district turns tonight."
 	case EvPartySent:
@@ -173,9 +173,9 @@ func (e Event) Text() string {
 	case EvHeartCleared:
 		return fmt.Sprintf("%s is dead. The heart of %s is still.", thingName(e.District, e.ID), where)
 	case EvRestored:
-		return fmt.Sprintf("%s is a district again.", strings.ToUpper(where[:1])+where[1:])
+		return fmt.Sprintf("%s %s a district again.", strings.ToUpper(where[:1])+where[1:], e.District.Verb("is", "are"))
 	case EvWentHome:
-		return fmt.Sprintf("The party goes home. %s stays turned.", strings.ToUpper(where[:1])+where[1:])
+		return fmt.Sprintf("The party goes home. %s %s turned.", strings.ToUpper(where[:1])+where[1:], e.District.Verb("stays", "stay"))
 	case EvWiped:
 		return "The whole party is down. They are carried out."
 	case EvDrivenOut:

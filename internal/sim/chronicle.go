@@ -69,7 +69,7 @@ func Chronicle(events []Event) []string {
 		case EvFragment:
 			line = append(line, "In a room that had been kept, a page in the old warden's hand.")
 		case EvHeartCleared:
-			line = append(line, fmt.Sprintf("%s went in and put down %s; %s was a district again.", names(), thingName(e.District, e.ID), the(e.District)))
+			line = append(line, fmt.Sprintf("%s went in and put down %s; %s %s a district again.", names(), thingName(e.District, e.ID), the(e.District), e.District.Verb("was", "were")))
 		case EvWentHome:
 			line = append(line, fmt.Sprintf("%s went into %s and came home with its heart still beating.", names(), the(e.District)))
 		case EvWiped:
@@ -81,8 +81,12 @@ func Chronicle(events []Event) []string {
 		case EvScarred:
 			line = append(line, fmt.Sprintf("%s came back marked: %s.", e.Who, thingName(e.District, e.ID)))
 		case EvTenureEnded:
-			flush()
-			flushQuiet(night)
+			if Outcome(e.ID) == LostLid && len(line) == 0 {
+				flushQuiet(night - 1) // the lid broke at dusk: tonight never happened
+			} else {
+				flush()
+				flushQuiet(night)
+			}
 			switch Outcome(e.ID) {
 			case Won:
 				out = append(out, fmt.Sprintf("%d nights. The lid held. The keys pass on.", e.N))

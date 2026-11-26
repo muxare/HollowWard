@@ -139,3 +139,25 @@ These follow from the questions in `QUESTIONS.md` and take effect when the code 
 **D54. The chronicle merges quiet nights** ("Nights 1 to 3 were quiet") and gives every other night one paragraph: what fell into ruin, what turned and why, who went in and how it ended, who died and who came back marked.
 
 **D55. `make balance` prints the targets but does not fail on them yet.** `balance -check` exits 1 when a target is missed; the Makefile starts using it in M6.
+
+## M5 (2026-11-26)
+
+**D56. The screen is rebuilt from the state after every command.** `game/` keeps no copy of game state. It holds the `sim.Game`, the Ledger and a few view choices (which district is open, who is picked for the party), and redraws everything when any of them changes. It can therefore never show a state the sim is not in.
+
+**D57. What "the real UI command path" means for the smoke test.** Every button has an action id (`end-day`, `assign:0:market:-1:-1`, `act:attack:2`). A click runs `App.press(id)`. Autoplay also runs `App.press(id)`, with the ids of the commands its script wants. If the screen does not carry an enabled button with that id, the smoke test fails. So the test proves that each step is offered by the screen the player would be on, and that the button's own code sends the command. It does not prove pixel hit-testing: nothing moves a mouse.
+
+**D58. A button is enabled only if the rules accept its command now.** The UI asks the sim, by applying the command to a copy of the state. A disabled button's hover text is the rule's own reason ("Cannot afford it: Curfew."). The UI has no second copy of the rules to drift out of step.
+
+**D59. The district panel shows "if it turned tonight".** It runs the real generator on the district as it stands, with a throwaway stream, and shows the result through the Ledger preview. The player sees the mapping from city state to hollow before dusk, not only after.
+
+**D60. Tooltips come from `Cause` values.** Enemies, rooms, preview lines, Neglect causes and Ledger entries all render `Cause.Describe()`. The after-action report is the night's events as text, each with its cause; the blow-by-blow of fights is left out.
+
+**D61. Saving.** The game autosaves to `user://save.json` after every command and keeps the Ledger in `user://ledger.json`. The title screen offers "Continue". Autoplay uses its own two files, an empty Ledger and a fixed seed, so it never touches a player's save and always plays the same city.
+
+**D62. Hints show during the first tenure only,** which is until the Ledger records a finished tenure. One line per screen.
+
+**D63. Upgrades have their own screen; wards are bought beside the building.** The city screen had no room for seven more buttons at 1280 by 720.
+
+**D64. Placeholder art.** One Polygon2D per district as its icon. On the node map: squares for rooms, diamonds for hazards, octagons for safe rooms, a spiked shape for the heart. Colour comes from one Theme and a small palette.
+
+**D65. District names agree with their verbs.** "The Market turns", "the Docks turn".
