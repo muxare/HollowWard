@@ -84,7 +84,7 @@ type Tuning struct {
 	// --- The Dreamer (all in tenths of a point) ---
 
 	DreamerMax           int   // the lid breaks here
-	DreamerPerNeglect    int   // rise per point of the turned district's Neglect
+	DreamerNeglectDiv    int   // a turning raises it by Neglect divided by this, in points
 	DreamerQuiet         int   // rise on a night when nothing turns
 	DreamerPerOpenHollow int   // rise for each district still turned from an earlier night
 	DreamerSootheOnClear int   // fall when a heart is cleared (0: the Dreamer only rises)
@@ -283,7 +283,7 @@ var T = Tuning{
 	},
 
 	DreamerMax:           1000,
-	DreamerPerNeglect:    1, // Neglect divided by 10, in points
+	DreamerNeglectDiv:    10,
 	DreamerQuiet:         50,
 	DreamerPerOpenHollow: 150,
 	DreamerSootheOnClear: 0,

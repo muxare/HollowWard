@@ -24,7 +24,7 @@ func (s *State) duskClock(l *log) {
 	rep := s.Dusk
 	rep.Before = s.Dreamer
 	if rep.Turned.Valid() {
-		rep.Rise = append(rep.Rise, Rise{RiseTurned, rep.Turned, rep.Neglect * t.DreamerPerNeglect})
+		rep.Rise = append(rep.Rise, Rise{RiseTurned, rep.Turned, TurnRise(rep.Neglect)})
 	} else {
 		rep.Rise = append(rep.Rise, Rise{RiseQuiet, content.NoDistrict, t.DreamerQuiet})
 	}
@@ -46,6 +46,10 @@ func (s *State) duskClock(l *log) {
 		s.endTenure(LostLid, l)
 	}
 }
+
+// TurnRise is how far the Dreamer rises, in tenths of a point, when a district
+// turns at the given Neglect: Neglect divided by ten, in points.
+func TurnRise(neglect int) int { return neglect * 10 / content.T.DreamerNeglectDiv }
 
 // dawn is where a tenure can end after a night. It reports whether it did.
 func (s *State) dawn(l *log) bool {

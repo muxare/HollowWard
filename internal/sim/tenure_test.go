@@ -18,7 +18,7 @@ func TestDreamerRises(t *testing.T) {
 	})
 	t.Run("a turning adds its Neglect over ten", func(t *testing.T) {
 		s := toDusk(t, 1, func(s *State) { setNeeds(s, content.Docks, 30) }) // Neglect 70
-		if s.Dreamer != 70*tn.DreamerPerNeglect || s.Dusk.Rise[0].Reason != RiseTurned || s.Dusk.Rise[0].District != content.Docks {
+		if s.Dreamer != 70*10/tn.DreamerNeglectDiv || s.Dusk.Rise[0].Reason != RiseTurned || s.Dusk.Rise[0].District != content.Docks {
 			t.Errorf("Dreamer %d tenths after Neglect 70; rise %+v", s.Dreamer, s.Dusk.Rise)
 		}
 		if s.Dusk.Before != 0 || s.Dusk.After != s.Dreamer || s.Dusk.Line == "" {
@@ -35,7 +35,7 @@ func TestDreamerRises(t *testing.T) {
 		s.Districts[content.Mills].Needs = [3]int{20, 20, 20}
 		s, _ = do(t, s, EndDay())
 		neglect := s.Dusk.Neglect
-		want := first + neglect*tn.DreamerPerNeglect + tn.DreamerPerOpenHollow
+		want := first + TurnRise(neglect) + tn.DreamerPerOpenHollow
 		if s.Dusk.Turned != content.Mills || s.Dreamer != want {
 			t.Fatalf("turned %s, Dreamer %d, want %d: %+v", s.Dusk.Turned, s.Dreamer, want, s.Dusk.Rise)
 		}
