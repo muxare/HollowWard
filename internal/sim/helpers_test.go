@@ -92,9 +92,14 @@ func sleep(t testing.TB, s State) State {
 }
 
 // pass plays one whole day and night doing nothing: the card gets its free
-// answer and nobody goes into any hollow.
+// answer and nobody goes into any hollow. So that tests about the day can run
+// as long as they like, it holds the Dreamer down and the calendar back.
 func pass(t testing.TB, s State) State {
 	t.Helper()
+	s.Dreamer = 0
+	if s.Day >= content.T.Nights {
+		s.Day = 1
+	}
 	s = answer(t, s)
 	s, _ = do(t, s, EndDay())
 	return sleep(t, s)

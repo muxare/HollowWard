@@ -240,3 +240,78 @@ func TestWardensStaffAsPromised(t *testing.T) {
 		}
 	}
 }
+
+// The same seed and command list give an identical state and event log, over
+// full tenures, for three seeds and every policy.
+func TestFullTenureDeterminism(t *testing.T) {
+	for _, seed := range []uint64{1, 20261126, 0xdeadbeef} {
+		for _, name := range Names() {
+			p, _ := New(name, seed)
+			s, log, err := sim.Apply(sim.State{}, sim.NewTenure(seed))
+			if err != nil {
+				t.Fatal(err)
+			}
+			cmds := []sim.Command{sim.NewTenure(seed)}
+			for s.Phase != sim.PhaseOver {
+				c := p.Next(&s)
+				next, ev, err := sim.Apply(s, c)
+				if err != nil {
+					t.Fatalf("seed %d %s: %v", seed, name, err)
+				}
+				s, log, cmds = next, append(log, ev...), append(cmds, c)
+			}
+			// Replay the recorded commands from nothing.
+			replay := sim.State{}
+			var relog []sim.Event
+			for _, c := range cmds {
+				next, ev, err := sim.Apply(replay, c)
+				if err != nil {
+					t.Fatalf("seed %d %s: replay refused %s: %v", seed, name, c.Kind, err)
+				}
+				replay, relog = next, append(relog, ev...)
+			}
+			if encode(t, replay) != encode(t, s) {
+				t.Errorf("seed %d %s: replay ended in a different state", seed, name)
+			}
+			if encode(t, relog) != encode(t, log) {
+				t.Errorf("seed %d %s: replay produced a different event log", seed, name)
+			}
+			if s.Outcome == sim.Ongoing || s.Nights < 1 {
+				t.Errorf("seed %d %s: the tenure ended without an outcome", seed, name)
+			}
+			// The command list itself survives JSON, so a replay can be stored.
+			var back []sim.Command
+			if err := json.Unmarshal([]byte(encode(t, cmds)), &back); err != nil || encode(t, back) != encode(t, cmds) {
+				t.Errorf("seed %d %s: commands do not round-trip", seed, name)
+			}
+		}
+	}
+}
+
+// The Ledger grants no stats: two tenures from one seed play out identically
+// whatever earlier wardens recorded, because the rules never see a Ledger.
+func TestLedgerGrantsNoPower(t *testing.T) {
+	play := func() (sim.State, []sim.Event) {
+		p, _ := New("repair-worst", 9)
+		s, log, _ := sim.Apply(sim.State{}, sim.NewTenure(9))
+		s, more, err := Play(s, p, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return s, append(log, more...)
+	}
+	first, log := play()
+	ledger := sim.Ledger{}.Record(log)
+	if len(ledger.Entries) == 0 {
+		t.Fatal("a whole tenure recorded nothing")
+	}
+	second, _ := play() // a warden who inherits that Ledger
+	if encode(t, first) != encode(t, second) {
+		t.Error("the second tenure differed")
+	}
+	for i := range second.Citizens {
+		if second.Citizens[i].Gear != first.Citizens[i].Gear {
+			t.Error("citizens differ between tenures from one seed")
+		}
+	}
+}

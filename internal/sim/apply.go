@@ -22,7 +22,7 @@ func Apply(s State, c Command) (State, []Event, error) {
 
 func (s *State) apply(c Command, l *log) error {
 	switch c.Kind {
-	case CmdAssignSteward, CmdRecallSteward, CmdIssueDecree, CmdResolveEvent, CmdEndDay:
+	case CmdAssignSteward, CmdRecallSteward, CmdIssueDecree, CmdResolveEvent, CmdEndDay, CmdBuyUpgrade:
 		if s.Phase != PhaseDay {
 			return ErrWrongPhase
 		}
@@ -58,17 +58,8 @@ func (s *State) apply(c Command, l *log) error {
 		return s.resolveEvent(c, l)
 	case CmdEndDay:
 		return s.endDay(l)
+	case CmdBuyUpgrade:
+		return s.buyUpgrade(c, l)
 	}
 	return ErrUnknown
 }
-
-// The pieces of the night that the full tenure (M4) fills in.
-
-// duskClock is where the Dreamer rises at dusk.
-func (s *State) duskClock(_ *log) {}
-
-// dawn is where the tenure can end. It reports whether it did.
-func (s *State) dawn(_ *log) bool { return false }
-
-// searchHaven is where a safe room gives up what it hides.
-func (s *State) searchHaven(_ *Room, _ *log) {}

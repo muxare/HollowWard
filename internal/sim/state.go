@@ -30,7 +30,8 @@ const (
 type State struct {
 	Version int     `json:"version"`
 	Seed    uint64  `json:"seed"`
-	Day     int     `json:"day"` // 1-based; night N follows day N
+	Day     int     `json:"day"`    // 1-based; night N follows day N
+	Nights  int     `json:"nights"` // nights survived so far
 	Phase   Phase   `json:"phase"`
 	Outcome Outcome `json:"outcome"`
 
@@ -43,7 +44,10 @@ type State struct {
 	Card         *DrawnCard `json:"card"`          // today's event
 	Deck         []int      `json:"deck"`          // cards not yet drawn, top first
 
-	Materials  [content.NumFamilies]int      `json:"materials"`  // hungerbone, ash-masks, blackcap
+	Dreamer    int                           `json:"dreamer"`    // the clock, in tenths of a point
+	Owned      [content.NumUpgrades]bool     `json:"owned"`      // city-wide upgrades bought
+	Fragments  int                           `json:"fragments"`  // story fragments found this tenure
+	Materials  content.Materials             `json:"materials"`  // hungerbone, ash-masks, blackcap
 	Hollows    [content.NumDistricts]*Hollow `json:"hollows"`    // one per turned district
 	Dusk       *DuskReport                   `json:"dusk"`       // what happened at dusk tonight
 	Expedition *Expedition                   `json:"expedition"` // the party in a hollow, if any
@@ -65,7 +69,8 @@ type District struct {
 
 // Building is the changing part of a building.
 type Building struct {
-	Condition int `json:"condition"`
+	Condition int  `json:"condition"`
+	Warded    bool `json:"warded"` // decays more slowly
 }
 
 // Grievance is the district's lowest need: what its key figure resents. Ties
@@ -106,6 +111,8 @@ type Citizen struct {
 	JitterHP    int `json:"jitter_hp"`
 	JitterSpeed int `json:"jitter_speed"`
 
+	Gear content.Mods `json:"gear"` // from city upgrades
+
 	HP        int  `json:"hp"`
 	Alive     bool `json:"alive"`
 	Downed    bool `json:"downed"`
@@ -115,8 +122,10 @@ type Citizen struct {
 // Stats are the citizen's combat numbers: job, plus jitter, traits and scars.
 func (c *Citizen) Stats() content.Stats {
 	st := content.Jobs[c.Job].Stats()
-	st.HP += c.JitterHP
-	st.Speed += c.JitterSpeed
+	st.HP += c.JitterHP + c.Gear.HP
+	st.Speed += c.JitterSpeed + c.Gear.Speed
+	st.Attack += c.Gear.Attack
+	st.Guard += c.Gear.Guard
 	for _, t := range c.Traits {
 		m := content.Traits[t].Mods()
 		st.HP, st.Attack, st.Guard, st.Speed = st.HP+m.HP, st.Attack+m.Attack, st.Guard+m.Guard, st.Speed+m.Speed
@@ -198,6 +207,7 @@ func (s State) Clone() State {
 	if s.Dusk != nil {
 		d := *s.Dusk
 		d.Causes = append([]NeglectCause(nil), s.Dusk.Causes...)
+		d.Rise = append([]Rise(nil), s.Dusk.Rise...)
 		n.Dusk = &d
 	}
 	if s.Expedition != nil {

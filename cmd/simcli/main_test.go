@@ -73,6 +73,15 @@ func TestPlay(t *testing.T) {
 			}
 		})
 	}
+	var whole bytes.Buffer
+	if err := run([]string{"play", "-seed", "2", "-policy", "random", "-nights", "0"}, &whole); err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{"THE CHRONICLE", "A new warden took the keys.", "The Dreamer rises by", "over: "} {
+		if !strings.Contains(whole.String(), want) {
+			t.Errorf("a whole tenure's output lacks %q", want)
+		}
+	}
 	var quiet bytes.Buffer
 	if err := run([]string{"play", "-q", "-nights", "2"}, &quiet); err != nil || strings.Count(quiet.String(), "\n") != 1 {
 		t.Errorf("-q should print one summary line, got %q (%v)", quiet.String(), err)

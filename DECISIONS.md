@@ -117,3 +117,25 @@ These follow from the questions in `QUESTIONS.md` and take effect when the code 
 **D44. A hazard room catches a party once.** After that it is cleared like any other room. Cleared rooms stay cleared across nights (Q4 default).
 
 **D45. The scripted wardens look one step ahead.** `repair-worst` and `farm` answer cards and choose decrees by applying each option to a copy of the state and comparing the result. They send the four hardiest citizens and go home when the party is badly hurt. `random` tries random orders and sends whichever the rules accept.
+
+## M4 (2026-11-26)
+
+**D46. The Dreamer is kept in tenths of a point (D12) and only rises (Q1 default).** `DreamerSootheOnClear` exists in `tuning.go` and is 0. Each dusk records why the meter rose, part by part, so the dusk screen can show it.
+
+**D47. When the tenure ends.** The lid breaks at dusk, before any expedition, and nights survived does not count that night. The win is checked at dawn after night 20. Losing every citizen is checked at dawn and takes precedence over the win.
+
+**D48. Seven upgrades.** A ward for one building (3 blackcap, repeatable per building) halves its decay. Three kinds of gear change every citizen: Bone Charms (+3 HP, 6 hungerbone), Ash Hoods (+1 Guard, 6 ash-masks), Bone-and-Ash Blades (+1 Attack, 4 hungerbone and 4 ash-masks). Three slow one need's decay by 2 everywhere: Granary Seals (5 hungerbone), Curfew Bells (5 ash-masks), Black Mortar (5 blackcap). Six of the seven take a single material. Upgrades last one tenure; nothing but the Ledger crosses to the next (pillar 5).
+
+**D49. What the Ledger holds.** One entry per enemy kind, per hazard (district and building) and per boss variant (district and grievance), each with the cause that produced it the first time, how often it has been met and in which tenure it was first met. It also holds the fragments found and the count of tenures ended and won. It is built by `Ledger.Record(events)`, which reads the event log and nothing else.
+
+**D50. The Ledger cannot grant stats, by construction.** `Apply` does not take a Ledger. The rules cannot read one.
+
+**D51. The dusk preview hides names, never causes.** For each thing in the hollow the preview shows its cause, since the cause is the city's own state and the warden can already see it. The name of the enemy, hazard or boss appears only if the Ledger records it; otherwise the line reads "Something not in the Ledger". Safe rooms are always named: the warden knows which buildings they kept.
+
+**D52. Fragments.** The first visit to each safe room turns up the next of the five notes, at most five per tenure. The Ledger keeps the set across tenures; all five unlock the closing text.
+
+**D53. A save is the state and the event log, with a version number.** A save from another version is refused with a clear error, not guessed at. `sim` encodes and decodes bytes; it never opens a file.
+
+**D54. The chronicle merges quiet nights** ("Nights 1 to 3 were quiet") and gives every other night one paragraph: what fell into ruin, what turned and why, who went in and how it ended, who died and who came back marked.
+
+**D55. `make balance` prints the targets but does not fail on them yet.** `balance -check` exits 1 when a target is missed; the Makefile starts using it in M6.

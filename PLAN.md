@@ -44,7 +44,7 @@ Tasks per milestone. Each milestone ends with `make check` passing, `PROGRESS.md
 - `simcli play -seed N -policy P` plays one night or a whole tenure and prints the event log
 - Tests: HP never negative, turn order follows Speed, every fight ends (property test over seeds), intent shown equals action taken, Downed and Scar rules
 
-## M4: full tenure
+## M4: full tenure (done)
 
 - The Dreamer: nightly rise, the +15 per district still turned, the dream line per night, loss at 100
 - Win after night 20; loss when no citizen can fight

@@ -81,6 +81,28 @@ type Tuning struct {
 	Ability         AbilityNumbers
 	Move            MoveNumbers
 
+	// --- The Dreamer (all in tenths of a point) ---
+
+	DreamerMax           int   // the lid breaks here
+	DreamerPerNeglect    int   // rise per point of the turned district's Neglect
+	DreamerQuiet         int   // rise on a night when nothing turns
+	DreamerPerOpenHollow int   // rise for each district still turned from an earlier night
+	DreamerSootheOnClear int   // fall when a heart is cleared (0: the Dreamer only rises)
+	DreamTierAt          []int // meter, in points, where each group of dream lines begins
+
+	// --- Upgrades ---
+
+	UpgradeCost [NumUpgrades]Materials // hungerbone, ash-masks, blackcap
+	GearCharms  Mods
+	GearHoods   Mods
+	GearBlades  Mods
+	DecayEase   int // need decay taken off by a seal, bells or mortar
+	WardDivisor int // a warded building's decay is divided by this
+
+	// --- Story ---
+
+	FragmentsPerTenure int // most fragments one tenure can turn up
+
 	// --- Decrees ---
 
 	DecreeCost     [NumDecrees]Cost
@@ -259,6 +281,31 @@ var T = Tuning{
 		DevourBonus: 2, DevourHeal: 4, WitherAttack: 1, RallyAttack: 1,
 		BreakRanksPenalty: 1, CollapseDamage: 3, SporesGuard: 1, ModFloor: -3,
 	},
+
+	DreamerMax:           1000,
+	DreamerPerNeglect:    1, // Neglect divided by 10, in points
+	DreamerQuiet:         50,
+	DreamerPerOpenHollow: 150,
+	DreamerSootheOnClear: 0,
+	DreamTierAt:          []int{0, 20, 40, 60, 80, 95},
+
+	UpgradeCost: [NumUpgrades]Materials{
+		//            hungerbone ash-masks blackcap
+		Ward:        {0, 0, 3},
+		BoneCharms:  {6, 0, 0},
+		AshHoods:    {0, 6, 0},
+		BoneBlades:  {4, 4, 0},
+		GranarySeal: {5, 0, 0},
+		CurfewBells: {0, 5, 0},
+		BlackMortar: {0, 0, 5},
+	},
+	GearCharms:  Mods{HP: 3},
+	GearHoods:   Mods{Guard: 1},
+	GearBlades:  Mods{Attack: 1},
+	DecayEase:   2,
+	WardDivisor: 2,
+
+	FragmentsPerTenure: 5,
 
 	DecreeCost: [NumDecrees]Cost{
 		RationGrain: {Grain: 12},

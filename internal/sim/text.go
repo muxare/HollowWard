@@ -41,6 +41,11 @@ func thingName(d content.DistrictID, slug string) string {
 			return a.Name
 		}
 	}
+	for _, u := range content.Upgrades {
+		if u.Slug == slug {
+			return u.Name
+		}
+	}
 	for _, sc := range content.Scars {
 		if sc.Slug == slug {
 			return sc.Name
@@ -183,6 +188,28 @@ func (e Event) Text() string {
 		return fmt.Sprintf("%s will work at half strength tomorrow.", e.Who)
 	case EvNightEnded:
 		return "Dawn."
+	case EvDreamerRose:
+		return fmt.Sprintf("The Dreamer rises by %d.%d, to %d.%d of %d.", e.N/10, e.N%10, e.V/10, e.V%10, content.T.DreamerMax/10)
+	case EvDreamerSoothed:
+		return fmt.Sprintf("The Dreamer settles by %d.%d, to %d.%d.", e.N/10, e.N%10, e.V/10, e.V%10)
+	case EvDreamLine:
+		return "  \"" + e.ID + "\""
+	case EvUpgradeBought:
+		if e.District.Valid() {
+			return fmt.Sprintf("The city makes a %s for %s in %s.", thingName(e.District, e.ID), "the "+content.Districts[e.District].Buildings[e.V].Name, where)
+		}
+		return fmt.Sprintf("The city makes %s.", thingName(e.District, e.ID))
+	case EvFragment:
+		return fmt.Sprintf("  In %s, a page in the old warden's hand: \"%s\"", e.ID, content.Fragments[e.N%len(content.Fragments)])
+	case EvTenureEnded:
+		switch Outcome(e.ID) {
+		case Won:
+			return fmt.Sprintf("THE TENURE ENDS. %d nights survived. The lid held.", e.N)
+		case LostLid:
+			return fmt.Sprintf("THE LID BREAKS. The tenure ends after %d nights.", e.N)
+		case LostNoParty:
+			return fmt.Sprintf("NO ONE IS LEFT TO SEND. The tenure ends after %d nights.", e.N)
+		}
 	}
 	return ""
 }

@@ -227,7 +227,7 @@ func (s *State) decay(l *log) {
 			continue
 		}
 		for n := range d.Needs {
-			d.Needs[n] = clamp(d.Needs[n]-t.NeedBaseDecay-t.NeedDecayAdj[id][n], 0, t.NeedMax)
+			d.Needs[n] = clamp(d.Needs[n]-s.NeedDecay(d.ID, content.Need(n)), 0, t.NeedMax)
 		}
 		for i := range d.Buildings {
 			was := d.Buildings[i].Condition
@@ -240,4 +240,21 @@ func (s *State) decay(l *log) {
 	}
 }
 
-func (s *State) buildingDecay(_ *District, _ int) int { return content.T.BuildingDecay }
+// NeedDecay is what a need loses in a district each day.
+func (s *State) NeedDecay(id content.DistrictID, n content.Need) int {
+	t := content.T
+	decay := t.NeedBaseDecay + t.NeedDecayAdj[id][n]
+	for u := range s.Owned {
+		if s.Owned[u] && content.Upgrades[u].Ease == n {
+			decay -= t.DecayEase
+		}
+	}
+	return max(decay, 0)
+}
+
+func (s *State) buildingDecay(d *District, b int) int {
+	if d.Buildings[b].Warded {
+		return content.T.BuildingDecay / content.T.WardDivisor
+	}
+	return content.T.BuildingDecay
+}

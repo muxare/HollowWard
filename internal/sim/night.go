@@ -41,7 +41,28 @@ type DuskReport struct {
 	Turned  content.DistrictID `json:"turned"` // NoDistrict on a quiet night
 	Neglect int                `json:"neglect"`
 	Causes  []NeglectCause     `json:"causes"`
+	Before  int                `json:"before"` // the Dreamer before tonight, in tenths
+	After   int                `json:"after"`  // and after
+	Rise    []Rise             `json:"rise"`   // why it rose
+	Line    string             `json:"line"`   // what the Dreamer says tonight
 }
+
+// Rise is one reason the Dreamer rose tonight.
+type Rise struct {
+	Reason   RiseReason         `json:"reason"`
+	District content.DistrictID `json:"district"`
+	Tenths   int                `json:"tenths"`
+}
+
+// RiseReason says why the Dreamer rose.
+type RiseReason string
+
+// The reasons.
+const (
+	RiseTurned RiseReason = "turned" // a district turned tonight: its Neglect
+	RiseQuiet  RiseReason = "quiet"  // nothing turned: it stirs anyway
+	RiseOpen   RiseReason = "open"   // a district is still turned from an earlier night
+)
 
 // Expedition is a party inside a hollow.
 type Expedition struct {
@@ -293,6 +314,10 @@ func (s *State) clearHeart(l *log) {
 	d.Turned = false
 	s.Hollows[h.District] = nil
 	l.add(EvRestored).in(d.ID)
+	if t.DreamerSootheOnClear > 0 {
+		s.Dreamer = max(s.Dreamer-t.DreamerSootheOnClear, 0)
+		l.add(EvDreamerSoothed).n(t.DreamerSootheOnClear).v(s.Dreamer)
+	}
 	s.endNight(l)
 }
 

@@ -17,6 +17,7 @@ const (
 	CmdIssueDecree   CommandKind = "issue-decree"   // Decree, District (if targeted)
 	CmdResolveEvent  CommandKind = "resolve-event"  // Choice
 	CmdEndDay        CommandKind = "end-day"
+	CmdBuyUpgrade    CommandKind = "buy-upgrade" // Upgrade, District and Building (for a ward)
 
 	// Dusk and night.
 	CmdSendParty CommandKind = "send-party" // District, Citizens
@@ -49,7 +50,7 @@ type Command struct {
 	Actor    int                `json:"actor,omitempty"`
 	Target   int                `json:"target,omitempty"`
 	Action   ActionKind         `json:"action,omitempty"`
-	Upgrade  int                `json:"upgrade,omitempty"`
+	Upgrade  content.UpgradeID  `json:"upgrade,omitempty"`
 }
 
 // ActionKind is what a citizen does on their turn in combat.
@@ -79,6 +80,11 @@ func ResolveEvent(choice int) Command { return Command{Kind: CmdResolveEvent, Ch
 
 // EndDay ends the day: stewards work, districts produce, needs decay.
 func EndDay() Command { return Command{Kind: CmdEndDay} }
+
+// BuyUpgrade spends materials on an upgrade. A ward names its building.
+func BuyUpgrade(id content.UpgradeID, d content.DistrictID, building int) Command {
+	return Command{Kind: CmdBuyUpgrade, Upgrade: id, District: d, Building: building}
+}
 
 // SendParty sends citizens into a turned district's hollow.
 func SendParty(d content.DistrictID, citizens ...int) Command {

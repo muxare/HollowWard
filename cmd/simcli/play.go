@@ -41,6 +41,13 @@ func play(args []string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
+	if s.Phase == sim.PhaseOver && !*quiet {
+		fmt.Fprintln(out, "THE CHRONICLE")
+		for _, line := range sim.Chronicle(events) {
+			fmt.Fprintln(out, " ", line)
+		}
+		fmt.Fprintln(out)
+	}
 	summary(out, &s, *name, *seed)
 	return nil
 }
@@ -54,9 +61,9 @@ func summary(out io.Writer, s *sim.State, name string, seed uint64) {
 	}
 	state := fmt.Sprintf("day %d", s.Day)
 	if s.Phase == sim.PhaseOver {
-		state = "over: " + string(s.Outcome)
+		state = fmt.Sprintf("over: %s after %d nights", s.Outcome, s.Nights)
 	}
-	fmt.Fprintf(out, "policy %s, seed %d: %s; %d of %d citizens alive; %d districts turned; coin %d, grain %d, timber %d; hungerbone %d, ash-masks %d, blackcap %d\n",
-		name, seed, state, s.Living(), len(s.Citizens), turned,
+	fmt.Fprintf(out, "policy %s, seed %d: %s; Dreamer %d.%d; %d of %d citizens alive; %d districts turned; coin %d, grain %d, timber %d; hungerbone %d, ash-masks %d, blackcap %d\n",
+		name, seed, state, s.Dreamer/10, s.Dreamer%10, s.Living(), len(s.Citizens), turned,
 		s.Resources[0], s.Resources[1], s.Resources[2], s.Materials[0], s.Materials[1], s.Materials[2])
 }

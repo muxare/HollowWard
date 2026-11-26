@@ -184,6 +184,31 @@ func (p *Random) night(s *sim.State) sim.Command {
 	return sim.Act(sim.ActAttack, target)
 }
 
-// bestUpgrade is where the wardens spend materials. Upgrades arrive with the
-// full tenure (M4).
-func bestUpgrade(_ *sim.State) (sim.Command, bool) { return sim.Command{}, false }
+// bestUpgrade spends materials as soon as something useful is affordable:
+// gear and seals first, then a ward on the building in the worst condition.
+func bestUpgrade(s *sim.State) (sim.Command, bool) {
+	for _, id := range []content.UpgradeID{content.BoneBlades, content.BoneCharms, content.AshHoods,
+		content.GranarySeal, content.CurfewBells, content.BlackMortar} {
+		if !s.Owned[id] && s.CanBuy(id) {
+			return sim.BuyUpgrade(id, content.NoDistrict, -1), true
+		}
+	}
+	if s.CanBuy(content.Ward) {
+		best, bestCond := sim.Command{}, 1<<30
+		for i := range s.Districts {
+			d := &s.Districts[i]
+			if d.Turned {
+				continue
+			}
+			for b := range d.Buildings {
+				if !d.Buildings[b].Warded && d.Buildings[b].Condition < bestCond {
+					best, bestCond = sim.BuyUpgrade(content.Ward, d.ID, b), d.Buildings[b].Condition
+				}
+			}
+		}
+		if bestCond < 1<<30 {
+			return best, true
+		}
+	}
+	return sim.Command{}, false
+}

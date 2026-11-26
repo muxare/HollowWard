@@ -40,9 +40,28 @@
 - Policies `random`, `repair-worst` and `farm`; `simcli play -seed N -policy P -nights K` prints the event log as text.
 - Tests: dusk selection and ties, party rules, hazards and safe rooms, death and Scar rates over 2,000 seeds, exhaustion, initiative, every ability, every enemy move, the round cap, wipes. A property test plays 36 tenures and checks after every command that HP stays in range, causes still match the frozen district, every enemy action was announced, and every fight ends.
 
+**M4: full tenure** (2026-11-26)
+
+- The Dreamer: rises every dusk by the turned district's Neglect over ten, or 5 on a quiet night, plus 15 per district still turned; one dream line per night, escalating; the lid breaks at 100.
+- Endings: won after 20 nights, lost to the lid, lost with no citizen left. A new tenure starts from a new seed.
+- Materials buy seven upgrades; six take a single material.
+- The Ledger, built from the event log; the dusk preview reads it.
+- The chronicle, generated from the event log.
+- Save and load: `sim.EncodeSave` and `DecodeSave` over the state and the log; a loaded game plays out the same future.
+- `cmd/balance`: 1,000 tenures per policy in parallel (about 7 seconds), with win rate, mean nights survived, how often each district turned, and the three targets.
+- Tests: the Dreamer's arithmetic, each ending, each upgrade, Ledger recording and round trip, the preview with an empty and a filled Ledger, the chronicle against a fixed text, save and load mid-fight, determinism over full tenures for 3 seeds and 3 policies, the harness under the race detector.
+
+Balance with the starting values (not yet tuned):
+
+| Policy | Wins | Mean nights | Target |
+| --- | --- | --- | --- |
+| `random` | 0.0% | 3.3 | under 10% |
+| `repair-worst` | 98.8% | 20.0 | 30 to 50% |
+| `farm` | 0.0% | 15.7 | at least 80% of `repair-worst` |
+
 ## Next
 
-**M4: full tenure.** See `PLAN.md`.
+**M5: Godot presentation.** See `PLAN.md`.
 
 ## Known issues
 
@@ -50,6 +69,4 @@
 - `go.sum` was produced without access to the Go checksum database. Run `go mod verify` once on a networked machine (`DECISIONS.md`, D10).
 - The first `gd` run on a machine is slow: it builds a patched copy of the Go compiler and the engine bindings. About two minutes here on two cores. Later runs take seconds.
 - `gd test` overwrites `graphics/linux_amd64.so` with a test build. The next `gd run` rebuilds it.
-- `make balance` is a stub that exits 2 until M4.
-- The tenure has no end yet: the Dreamer, winning and losing arrive in M4.
-- With the starting values `repair-worst` clears every hollow easily. Balance is M6.
+- Two of the three balance targets are missed with the starting values (table above). Tuning is M6.

@@ -44,6 +44,7 @@ type Room struct {
 	Cause    Cause    `json:"cause"` // why the room exists
 	Visited  bool     `json:"visited"`
 	Cleared  bool     `json:"cleared"`
+	Searched bool     `json:"searched"` // a safe room that has given up what it hid
 }
 
 // Enemy is one thing that lives in a hollow.
