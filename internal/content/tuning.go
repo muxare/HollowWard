@@ -43,6 +43,25 @@ type Tuning struct {
 
 	Event EventMagnitudes
 
+	// --- The hollow ---
+
+	EnemyNeedBelow    int               // a need below this breeds its enemy family
+	EnemyCountBase    int               // enemies per family: this...
+	EnemyCountPer     int               // ...plus one per this many points of severity
+	EnemyTier2At      int               // severity at which common enemies appear
+	EnemyTier3At      int               // severity at which a greater enemy appears
+	EnemyHPPer        int               // +1 HP per this many points of severity
+	EnemyAttackPer    int               // +1 Attack per this many points of severity
+	EnemyStats        [NumEnemies]Stats // base numbers per enemy
+	MaxEnemiesPerRoom int
+	BossStats         [NumDistricts]Stats // base numbers per district's boss
+	BossHPPer         int                 // +1 boss HP per this many points the grievance is below NeedMax
+	BossAttackPer     int                 // +1 boss Attack per this many points below NeedMax
+	BossEscortPer     int                 // one escort per this many points of severity...
+	BossEscortMax     int                 // ...up to this many
+	HazardDamageBase  int                 // a hazard room hurts everyone by this...
+	HazardDamagePer   int                 // ...plus 1 per this many points below the ruin threshold
+
 	// --- Decrees ---
 
 	DecreeCost     [NumDecrees]Cost
@@ -133,6 +152,41 @@ var T = Tuning{
 		XS: 4, S: 5, S6: 6, M: 8, L: 10, XL: 12, XXL: 15,
 		CostLow: 5, CostMid: 6, CostHigh: 8,
 	},
+
+	EnemyNeedBelow: 50,
+	EnemyCountBase: 1,
+	EnemyCountPer:  10,
+	EnemyTier2At:   17,
+	EnemyTier3At:   34,
+	EnemyHPPer:     10,
+	EnemyAttackPer: 25,
+	EnemyStats: [NumEnemies]Stats{
+		//            HP Attack Guard Speed
+		Gaunt:       {6, 3, 0, 6},
+		Gnawer:      {9, 3, 1, 4},
+		HollowBelly: {16, 5, 1, 2},
+		AshMask:     {7, 3, 0, 5},
+		BrandBearer: {9, 4, 0, 4},
+		ManyHands:   {15, 3, 1, 3},
+		Blackcap:    {5, 2, 1, 3},
+		MouldHound:  {10, 4, 0, 5},
+		Sump:        {18, 5, 2, 1},
+	},
+	MaxEnemiesPerRoom: 4,
+	BossStats: [NumDistricts]Stats{
+		Market:    {26, 4, 1, 4},
+		Watch:     {30, 5, 2, 4},
+		Docks:     {28, 5, 1, 5},
+		Temple:    {24, 4, 1, 5},
+		Mills:     {30, 5, 1, 3},
+		Tenements: {26, 4, 1, 4},
+	},
+	BossHPPer:        6,
+	BossAttackPer:    34,
+	BossEscortPer:    20,
+	BossEscortMax:    2,
+	HazardDamageBase: 2,
+	HazardDamagePer:  10,
 
 	DecreeCost: [NumDecrees]Cost{
 		RationGrain: {Grain: 12},

@@ -23,9 +23,17 @@
 - `content` holds the data; every number is in `tuning.go`.
 - Tests: Neglect table, steward defaults, each decree, every card and choice, the deck, decay, output, day-tick order, illegal commands, input never mutated, JSON round trip with identical future, stream independence, determinism over 3 seeds for 20 days.
 
+**M2: hollow generator** (2026-11-26)
+
+- `sim.GenerateHollow`: district type to layout, needs to enemy families, buildings to hazard and safe rooms, key figure to boss.
+- Every room, enemy and boss carries a `Cause`; `Cause.Resolve` checks it against district state and `Cause.Describe` renders it ("Market Supply was 18").
+- Content: nine enemies in three families, six layouts, three boss twists, enemy moves.
+- `simcli generate -seed N` prints a hollow as text. `-needs` and `-conds` set a district by hand.
+- Tests: 11 legibility fixtures, "lower need means more and stronger", 500 fixed seeds, districts from real play, `FuzzGenerateHollow` (about a million inputs clean), graph invariants.
+
 ## Next
 
-**M2: hollow generator.** See `PLAN.md`.
+**M3: expedition and combat, headless.** See `PLAN.md`.
 
 ## Known issues
 

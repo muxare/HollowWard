@@ -73,3 +73,19 @@ These follow from the questions in `QUESTIONS.md` and take effect when the code 
 **D24. The event log is returned by `Apply` and kept by the caller, not stored inside `State`.** `Apply` copies the state it is given so that it never modifies its input. Carrying a growing log inside the state would make every command cost more as the tenure goes on. A save holds the state and the log side by side (M4).
 
 **D25. Five more decisions the spec left open.** Citizens get two different traits that are not opposites (nobody is both Sturdy and Frail). Starting needs are drawn from 55 to 85 and building conditions from 45 to 90. Neglect rounds to the nearest point, and its causes are held in thirds of a point so the three needs share "100 minus the mean" exactly. The grievance and the worst building break ties toward the first in the fixed order.
+
+## M2 (2026-11-26)
+
+**D26. What each cause value means.** A need cause records the need's value. A building cause records its condition. The figure cause records the value of the district's lowest need, which is the grievance. The district cause records the district's ID. `Cause.Resolve` looks any of them up in a district, and the tests use it to prove that every cause points at real state.
+
+**D27. A need at or above 50 breeds nothing.** A district can turn at Neglect 40 with every need above 50, for example on ruined buildings. Its hollow then has empty rooms, hazards and the boss, and the empty rooms say why. This also means farming a material requires actually starving the need below 50.
+
+**D28. How many, and how strong.** A need below 50 has a severity of 50 minus its value. It breeds 1 enemy plus 1 per 10 points of severity (so Supply 18 gives four, as in the spec's example). From severity 17 every second one is the common kind; from 34 the first is the greater kind. Every enemy also gains HP and Attack with severity. The stream decides only which room each enemy waits in, never what exists.
+
+**D29. Building rooms sit on the path.** Each building has a slot in its district's layout. A hazard or safe room is spliced into every way out of that slot's room, so a ruined building always costs the party something and a kept one always helps. The spec allows moving only deeper or home, so a side room would be a dead end.
+
+**D30. Room counts.** Layouts have 6 to 8 core rooms and districts have 2 or 3 buildings, so every hollow has 6 to 10 rooms whatever the buildings became.
+
+**D31. Boss variants.** Six bosses, one per district's key figure, each twisted one of three ways by the grievance: Starved (Supply), Unpaid (Order), Crumbling (Upkeep). The twist picks the boss's two special moves. The boss grows with how low the grievance is, and brings up to two escorts of the grievance's family when that need is below 50.
+
+**D32. A hazard room costs HP.** Everyone who enters loses 2 HP, plus 1 per 10 points the building is below 30. Hazards hold no enemies.

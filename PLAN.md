@@ -24,7 +24,7 @@ Tasks per milestone. Each milestone ends with `make check` passing, `PROGRESS.md
 - Neglect with its causes, largest first
 - Tests: Neglect table, steward defaults, decree costs, production, event determinism, an illegal-command table, stream independence (drawing from one stream leaves the others unchanged)
 
-## M2: hollow generator
+## M2: hollow generator (done)
 
 - `Cause{Source, ID, ValueAtGeneration}` and the hollow types: room graph, rooms, enemy groups, hazards, safe rooms, heart
 - Six layout templates, one per district, each yielding 6 to 10 rooms

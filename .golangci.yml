@@ -14,6 +14,12 @@ linters:
     - misspell
     - unconvert
   settings:
+    errcheck:
+      # Printing a report: a failed write to the terminal has no remedy.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
     depguard:
       rules:
         # internal/sim is a pure core: no engine, no presentation, no OS, no clock.

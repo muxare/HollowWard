@@ -3,6 +3,7 @@ package sim
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"testing"
 
 	"hollowward/internal/content"
@@ -78,3 +79,5 @@ func answer(t testing.TB, s State) State {
 	t.Fatalf("card %d has no free choice", s.Card.Card)
 	return s
 }
+
+func sprintf(format string, args ...any) string { return fmt.Sprintf(format, args...) }

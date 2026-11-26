@@ -37,6 +37,17 @@ func buildingCause(d *District, b int) Cause {
 	return Cause{FromBuilding, d.ID.Slug() + "/" + content.Districts[d.ID].Buildings[b].Slug, d.Buildings[b].Condition}
 }
 
+// figureCause points at the key figure. Its value is the need that became the
+// grievance, the lowest one.
+func figureCause(d *District) Cause {
+	return Cause{FromFigure, d.ID.Slug() + "/figure", d.Needs[d.Grievance()]}
+}
+
+// districtCause points at the district itself. Its value is the district ID.
+func districtCause(d *District) Cause {
+	return Cause{FromDistrict, d.ID.Slug(), int(d.ID)}
+}
+
 // Resolve looks a cause up in a district's state. It returns the value that
 // state holds now and whether the cause points at something real there.
 func (c Cause) Resolve(d *District) (value int, ok bool) {
@@ -73,7 +84,7 @@ func (c Cause) Describe() string {
 	case FromDistrict:
 		return "it is the " + def.Name
 	case FromFigure:
-		return fmt.Sprintf("the %s's grievance, at %d", def.FigureTitle, c.ValueAtGeneration)
+		return fmt.Sprintf("the %s's grievance: their lowest need was %d", def.FigureTitle, c.ValueAtGeneration)
 	case FromNeed:
 		for n := content.Need(0); n < content.NumNeeds; n++ {
 			if n.Slug() == thing {
